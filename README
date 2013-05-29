@@ -1,3 +1,11 @@
 orderparams
 
 code for computing order parameters
+
+
+TODO
+-----------
+
+- improve reading parameters from params.out (?)
+  could possibly read from params.pkl with interface to
+  python code.

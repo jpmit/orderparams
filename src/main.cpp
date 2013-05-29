@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <map>
+#include <string>
 #include "readwrite.h"
 #include "box.h"
 #include "orderparameter.h"
@@ -9,6 +11,8 @@
 using std::cout;
 using std::endl;
 using std::vector;
+using std::map;
+using std::string;
 
 /* Compute the values of all order parameters for a given configuration
  */
@@ -20,13 +24,26 @@ int main(int argc, char* argv[])
 			 return 1;
 	  }
 
+	  // read particle positions from xyz file passed on command line
 	  vector<Particle> allpars = readxyz(argv[1]);
 
+	  // read nsurf, lboxx, lboxy, lboxz, zperiodic from params.out file
+	  map<string, string> params = readparams("params.out");
+	  int nsurf = atoi(params["nparsurf"].c_str());
+	  double lboxx = atof(params["lboxx"].c_str());
+	  double lboxy = atof(params["lboxy"].c_str());
+	  double lboxz = atof(params["lboxz"].c_str());
+	  map<string, bool> bmap;
+	  bmap["True"] = true;
+	  bmap["False"] = false;	 
+	  bool zperiodic = bmap[params["zperiodic"]];
+	  cout << lboxx << " " << lboxy << " " << lboxz << " " << nsurf << " " << zperiodic
+			 << endl;
+	  
 	  // arguments are lboxx, lboxy, lboxz, neighboursep, periodic?
 	  Box simbox(22.4492409662,21.3857742696,14.2055395823,1.5,false);
 
 	  // test OPS using both interfaces
-	  int nsurf = 1320;
 	  int nlin = 6;
 	  double linval = 0.65;
 

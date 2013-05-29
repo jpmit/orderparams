@@ -25,6 +25,9 @@ bool not_space(char c)
 	  return !isspace(c);
 }
 
+/* Split a string.
+ */
+
 vector<string> split(const string& str)
 {
 	  typedef string::const_iterator iter;
@@ -65,18 +68,47 @@ void writexyz(vector<Particle> pars, const string fname, bool writesymbols = tru
 					outfile << i->symbol << " ";
 			 outfile << i->pos[0] << " " << i->pos[1] << " " << i->pos[2] << endl;
 	  }
+	  /* We should maybe return 0 here instead to indicate success */
 	  return;
+}
+
+/* Read input parameters.  See 'params.out'
+ */
+
+map<string, string> readparams(const string fname)
+{
+	  map<string, string> params;
+	  ifstream infile(fname.c_str());
+	  string sline;
+	  vector<string> spline;
+	  
+     // warning: there is no real error checking here	  
+	  while (infile) { 
+
+			 getline(infile,sline);
+
+			 // comments # must be first char on line
+			 if (sline[0] != '#') {
+					spline = split(sline);
+					if (spline.size() == 2)
+						  params[spline[0]] = spline[1];
+			 }
+	  }
+
+	  return params;
 }
 
 /* Read vector of particles from file in the normal XYZ format.
  */
 
-vector<Particle> readxyz(const string fname, bool symbols = true, bool gettypes = true)
+vector<Particle> readxyz(const string fname, bool symbols = true,
+								 bool gettypes = true)
 {
 	  vector<Particle> allpars;
 	  int npar = 0;
 	  ifstream infile(fname.c_str());
-	  // map to define conversion between character symbol and particle type (an integer)
+	  // map to define conversion between character symbol
+	  // and particle type (an integer)
 	  map<char,int> partypes;
 	  partypes['O'] = 1;
 	  partypes['S'] = 0;
@@ -84,7 +116,8 @@ vector<Particle> readxyz(const string fname, bool symbols = true, bool gettypes 
 
 	  // check that file exists and can be read from
 	  if (!infile) {
-			 cout << "Warning: " << fname << " does not exist or cannot be read." << endl;
+			 cout << "Warning: " << fname <<
+					" does not exist or cannot be read." << endl;
 			 // return empty vector of particles
 			 return allpars;
 	  }
@@ -93,7 +126,8 @@ vector<Particle> readxyz(const string fname, bool symbols = true, bool gettypes 
 	  try {
 			 infile >> npar;
 	  } catch (...) {
-			 cout << "Warning: " << fname << " does not appear to be an XYZ file."
+			 cout << "Warning: " << fname
+					<< " does not appear to be an XYZ file."
 					<< " Top line must be integer number of particles." << endl
 					<< " No particles found." << endl;
 			 // return empty vector of particles
@@ -148,8 +182,9 @@ vector<Particle> readxyz(const string fname, bool symbols = true, bool gettypes 
 
 	  // check we read the correct number of particles
 	  if (nread != npar) 
-			 cout << "Warning: Did not read correct number of particles from " << fname
-					<< " (" << nread << " of " << npar << " read)" << endl;
+			 cout << "Warning: Did not read correct number of particles from "
+					<< fname << " (" << nread << " of " << npar << " read)"
+					<< endl;
 
 	  return allpars;
 }
