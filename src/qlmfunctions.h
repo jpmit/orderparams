@@ -9,8 +9,6 @@
 
 void qlmtildes(boost::multi_array<std::complex<double>,2>&,
 					const std::vector<int>&, const int);
-void qlmbars(boost::multi_array<std::complex<double>,2>&,
-				 const std::vector<int>&, const int);
 boost::multi_array<std::complex<double>,2 > qlms(const std::vector<Particle>&,
 															 const Box& simbox,
 															 std::vector<int>& numneigh,

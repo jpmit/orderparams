@@ -62,7 +62,6 @@ double QCluster::operator() (const vector<Particle>& particles, const Box& simbo
 	  // get both \bar{qlm}[i] and \tilde{qlm}[i] for every particle i
 	  array2d qlmb = qlms(particles, simbox, numneigh, lneigh, lval);
 	  array2d qlmt = qlmb;
-	  qlmbars(qlmb, numneigh, lval);	  
 	  qlmtildes(qlmt, numneigh, lval);
 
 	  // get crystal particle numbers according to link threshold and min number of links

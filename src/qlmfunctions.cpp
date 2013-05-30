@@ -1,5 +1,6 @@
 #include "boost/multi_array.hpp"
 #include <complex>
+#include <iostream>
 #include "constants.h"
 #include "particle.h"
 #include "box.h"
@@ -10,8 +11,10 @@ using std::vector;
 
 typedef boost::multi_array<complex<double>,2> array2d;
 	  
-/* Return a vector whose elements are crystalline particles as idenfified by the order parameter.
- */
+// Return a vector whose elements are indexes of particles
+// (indexes into qlmt) idenfified as crystalline by the number of
+// 'links' between the particle
+// and its neighbours.
 
 vector<int> xtalpars(const array2d& qlmt, const vector<int>& numneigh,
 							const vector<vector<int> >& lneigh, const int nsurf,
@@ -23,22 +26,27 @@ vector<int> xtalpars(const array2d& qlmt, const vector<int>& numneigh,
 	  int nlin,k;
 	  double linval;
 
-	  // compute dot product \tilde{qlm}(i).\tilde{qlm}(j) for each neighbour pair,
-	  // whenever this is greater than the threshold (linkval), we call this a crystal link
+	  // compute dot product \tilde{qlm}(i).\tilde{qlm}(j) for each
+	  // neighbour pair, whenever this is greater than the threshold
+	  // (linkval), we call this a crystal link
+
 	  for (array2d::index i = nsurf; i != npar; ++i) {
-			 // only interested in particle if it has at least nlinks neighbours
+			 // only interested in particle if it has at least nlinks
+			 // neighbours
 			 if (numneigh[i] >= nlinks) {
 					nlin = 0;
 					for (int j = 0; j != numneigh[i]; ++j) {
 						  k = lneigh[i][j];
 						  linval = 0.0;
 						  for (int m = 0; m != 2*lval + 1; ++m)
+								 // dot product (sometimes denoted Sij)
 								 linval += qlmt[i][m].real()*qlmt[k][m].real() +
 										     qlmt[i][m].imag()*qlmt[k][m].imag();
 						  if (linval >= linkval)
 								 nlin = nlin + 1;
 					}
-					// if particle has >=nlinks crystal links, it is in a crystal environment
+					// if particle has >=nlinks crystal links, it is in a
+					// crystal environment
 					if (nlin >= nlinks) {
 						  xtals.push_back(i);
 					}
@@ -47,35 +55,158 @@ vector<int> xtalpars(const array2d& qlmt, const vector<int>& numneigh,
 	  return xtals;
 }
 
-/* Get Q of all particles in pnums, which gives indexes into particles.
-	This can be used to get Q global, or Q cluster, depending on pnums.
-*/
+// averageqlm:
+// average values in vector qlm
+// This could in principle be made a template function!
 
-double Qpars(const array2d& qlmb, const vector<int>& pnums, const int lval)
+vector<complex<double> > averageqlm(const array2d& qlm,
+												const vector<int>& pnums,
+												const int lval)
 {
 	  vector<complex<double> > qlmaverage(2*lval + 1,0.0);
 
 	  for (array2d::index i = 0; i != pnums.size(); ++i) {
 			 for (int m = 0; m != 2*lval + 1; ++m) {
-					qlmaverage[m] += qlmb[pnums[i]][m];
+					qlmaverage[m] += qlm[pnums[i]][m];
 			 }
 	  }
 	  
 	  for (int m = 0; m != 2*lval + 1; ++m) {
-			 qlmaverage[m] = qlmaverage[m]/ (static_cast<double>(pnums.size()));
+			 qlmaverage[m] = qlmaverage[m]/ (static_cast<double>
+														(pnums.size()));
 	  }
+
+	  return qlmaverage;
+}
+
+// Qpars:
+// Get Q of all particles in pnums, which gives indexes into qlm
+//	This can be used to get Q global, or Q cluster, depending on pnums.
+
+double Qpars(const array2d& qlm, // qlm(i) for every particle i
+				 const vector<int>& pnums, // particle indices of interest
+				 const int lval) // spherical harmonic number
+                             // (usually 4 or 6)
+{
+	  // get a vector which contains qlm averaged over all particles
+	  // with indexes in pnums i.e.
+	  // [<qlm=-6>, <qlm=-5>, ....., <qlm=6>]
+	  vector<complex<double> > qlma = averageqlm(qlm, pnums, lval);
 
 	  double qvalue = 0.0;
 	  for (int m = 0; m != 2*lval + 1; ++m) {
-			 qvalue += norm(qlmaverage[m]);
+			 // note that norm of complex number is its squared
+			 // magnitude,i.e. norm(x) = |x|^2
+			 qvalue += norm(qlma[m]);
 	  }
 
 	  qvalue = sqrt(qvalue*(4.0*PI/(2*lval + 1)));
 	  return qvalue;
 }
 
-/* Convert matrix of Nb(i)*\bar{qlm}(i) to matrix of \tilde{qlm}(i) (in Amanda notation)
- */
+// Wpars:
+// Get W of all particles in pnums, which gives indexes into qlm
+//	This can be used to get W global, or W cluster, or the w(i)'s
+// (i.e. W for each particle), depending on pnums.
+
+double Wpars(const array2d& qlm, // qlm(i) for every particle i
+				 const vector<int>& pnums, // particle indices
+				 const int lval) // spherical harmonic number
+                             // (usually 4 or 6)
+{
+	  // get a vector which contains qlm averaged over all particles
+	  // with indexes in pnums i.e.
+	  // [<qlm=-6>, <qlm=-5>, ....., <qlm=6>]
+	  vector<complex<double> > qlma = averageqlm(qlm, pnums, lval);
+	  
+	  complex<double> wval = 0.0;
+	  // cycle through the wigner symbols in the order
+	  // they appear in constants.h, remembering to multiply
+	  // by the correct number of identical permutations
+	  if (lval == 6) {
+			 // cycle through all distinct permutations
+			 // (16 in total for lval = 6)
+			 for (int pnum = 0; pnum != 16; ++pnum) {
+					int i1 = WIGNERINDX6[pnum][0] + 6;
+					int i2 = WIGNERINDX6[pnum][1] + 6;
+					int i3 = WIGNERINDX6[pnum][2] + 6;
+					// casting to type double is apparently necessary
+					// due to template for multiplying complex numbers
+					wval += static_cast<double>(WIGNERPERM6[pnum])
+						     *qlma[i1]*qlma[i2]*qlma[i3];
+			 }
+	  }
+	  else if (lval == 4) {
+			 // cycle through all distinct permutations
+			 // (9 in total for lval = 4)
+			 for (int pnum = 0; pnum != 9; ++pnum) {
+					int i1 = WIGNERINDX4[pnum][0] + 4;
+					int i2 = WIGNERINDX4[pnum][1] + 4;
+					int i3 = WIGNERINDX4[pnum][2] + 4;					
+					wval += static_cast<double>(WIGNERPERM4[pnum])
+						     *qlma[i1]*qlma[i2]*qlma[i3];
+			 }
+	  }
+	  // should probably throw an exception here if lval not 4 or 6
+	  {}
+
+	  // compute denominator
+	  double qvalue = 0.0;
+	  for (int m = 0; m != 2*lval + 1; ++m) {
+			 // note that norm of complex number is its squared
+			 // magnitude,i.e. norm(x) = |x|^2
+			 qvalue += norm(qlma[m]);
+	  }
+	  return abs(wval) / pow(qvalue, 1.5);
+}
+
+// ql:
+// Get ql(i) for every particle i in qlm
+// See Lechner Dellago JCP 129 114707 (2008) equation (3)
+// Note that this function can be used to compute both ql(i)
+// which is LD equation (3) and \bar{ql(i)}, which is LD equation (5).
+// In the latter case we just need to pass a matrix
+// of \bar{qlm} rather than qlm.
+
+vector<double> qls(const array2d& qlm)
+{
+	  int npar = qlm.shape()[0];
+	  int lval = (qlm.shape()[1] - 1)/ 2;
+	  vector<double> ql;
+	  ql.resize(npar);
+	  vector<int> par(1,0);
+
+	  for (array2d::index i = 0; i != npar; ++i)
+	  {
+			 // this is a bit inefficient, since we make a lot of function
+			 // calls and multiplications.  But is saves code replication
+			 // and in any case this function should only need to be
+			 // called once for any particular particle configuration
+			 par[0] = i;
+			 ql[i] = Qpars(qlm, par, lval);
+			 std::cout << ql[i] << std::endl;
+	  }
+	  return ql;
+}
+
+// wl:
+// Get wl(i) for all particles
+// See Lechner Dellago JCP 129 114707 (2008) equation (4)
+// Note that this function can be used to compute both wl(i)
+// which is LD equation (4) and \bar{wl(i)}, which is LD equation (7).
+// In the latter case we just need to pass a matrix
+// of \bar{qlm} rather than qlm.
+
+vector<double> wls(const array2d& qlm)
+{
+	  int npar = qlm.shape()[0];
+	  int lval = (qlm.shape()[1] - 1)/ 2;	  
+	  vector<double> wl;
+	  wl.resize(npar);	  
+}
+
+// qlmtildes:
+// Convert matrix of qlm(i) to matrix of \tilde{qlm}(i)
 
 void qlmtildes(array2d& qlm, const vector<int>& numneigh, const int lval)
 {
@@ -93,26 +224,11 @@ void qlmtildes(array2d& qlm, const vector<int>& numneigh, const int lval)
 	  }
 }
 
-/* Convert matrix of Nb(i)*\bar{qlm}(i) to matrix of \bar{qlm}(i) (in Amanda notation)
- */
-
-void qlmbars(array2d& qlm, const vector<int>& numneigh, const int lval)
-{
-	  // divide each row of the matrix by the number of neighbours, this gives qlmbar
-	  int npar = qlm.shape()[0];
-	  for (int i = 0; i != npar; ++i) {
-			 if (numneigh[i] >= 1) {
-					for (int k = 0; k != 2*lval + 1; ++k) 
-						  qlm[i][k] = qlm[i][k]/((double) numneigh[i]);
-			 }
-	  }
-}
-
-/* Return matrix of Nb(i)*\bar{qlm}(i) (in Amanda notation).
- */
+// Return matrix of qlm(i).  The matrix has dimensions [i,(2l + 1)]
 
 array2d qlms(const vector<Particle>& particles, const Box& simbox,
-				 vector<int>& numneigh, vector<vector<int> >& lneigh, const int lval)
+				 vector<int>& numneigh, vector<vector<int> >& lneigh,
+				 const int lval)
 {
 	  vector<Particle>::size_type npar = particles.size();
 	  
@@ -134,7 +250,8 @@ array2d qlms(const vector<Particle>& particles, const Box& simbox,
 								 ++numneigh[i];
 								 lneigh[i].push_back(j);
 
-								 // compute angles cos(theta) and phi in spherical coords
+								 // compute angles cos(theta) and phi in
+								 // spherical coords
 								 r = sqrt(r2);
 								 costheta = sep[2]/r;
 								 rh = sqrt(sep[0]*sep[0] + sep[1]*sep[1]);
@@ -148,7 +265,8 @@ array2d qlms(const vector<Particle>& particles, const Box& simbox,
 										phi = 2.0*PI - acos(sep[0]/rh);
 								 }
 
-								 // compute contribution of particle j to q6 of particle i
+								 // compute contribution of particle j to qlm of
+								 // particle i
 								 for (k = 0; k != 2*lval + 1; ++k) {
 										m = -lval + k;
 										// spherical harmonic
@@ -157,13 +275,16 @@ array2d qlms(const vector<Particle>& particles, const Box& simbox,
 						  }
 					}
 			 }
-	  
-			 // Now we have an array of Nb(i)*\bar{qlm}(i) in Amanda notation
-			 // Note that we either want to convert this to \bar{qlm}(i),
-			 // which is needed for computing global OPS e.g Q_6^cl
-			 // OR we want return normalized values \tidle{qlm} in Amanda notation
-			 // which is needed for computing local order parameters
-	  }
 
+			 // We now have N_b(i)*qlm(i) for particle i stored in qlm[i][k]
+			 // Now divide by N_b(i)
+			 if (numneigh[i] >= 1) {
+					for (int k = 0; k != 2*lval + 1; ++k) 
+						  qlm[i][k] = qlm[i][k]/(static_cast<double>
+														 (numneigh[i]));
+			 }			 
+	  } // next particle i
+
+	  // the array we are returning is qlm(i), see comments in qdata.cpp
 	  return qlm;
 }
