@@ -5,8 +5,9 @@ CXX = g++
 CXXFLAGS = -Wno-deprecated -O3
 LDFLAGS = 
 LDLIBS = -l gsl -l blas
-OBJS = $(addprefix $(OBJDIR)/, main.o conncomponents.o orderparameter.o opfunctions.o readwrite.o \
-       qlmfunctions.o gyration.o diagonalize.o qdata.o)
+OBJS = $(addprefix $(OBJDIR)/, main.o conncomponents.o orderparameter.o \
+         opfunctions.o readwrite.o qlmfunctions.o gyration.o diagonalize.o \
+         qdata.o)
 
 all: orderparams
 
