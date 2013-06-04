@@ -1,6 +1,7 @@
 #include "boost/multi_array.hpp"
 #include <complex>
 #include <iostream>
+#include <math.h>
 #include "constants.h"
 #include "particle.h"
 #include "box.h"
@@ -10,9 +11,10 @@ using std::complex;
 using std::vector;
 
 typedef boost::multi_array<complex<double>,2> array2d;
-	  
+
+// xtalpars:
 // Return a vector whose elements are indexes of particles
-// (indexes into qlmt) idenfified as crystalline by the number of
+// (indexes into qlm) idenfified as crystalline by the number of
 // 'links' between the particle
 // and its neighbours.
 
@@ -109,10 +111,10 @@ double Qpars(const array2d& qlm, // qlm(i) for every particle i
 //	This can be used to get W global, or W cluster, or the w(i)'s
 // (i.e. W for each particle), depending on pnums.
 
-double Wpars(const array2d& qlm, // qlm(i) for every particle i
-				 const vector<int>& pnums, // particle indices
-				 const int lval) // spherical harmonic number
-                             // (usually 4 or 6)
+complex<double> Wpars(const array2d& qlm, // qlm(i) for all particles i
+							 const vector<int>& pnums, // particle indices
+							 const int lval) // spherical harmonic number
+                                      // (usually 4 or 6)
 {
 	  // get a vector which contains qlm averaged over all particles
 	  // with indexes in pnums i.e.
@@ -132,32 +134,38 @@ double Wpars(const array2d& qlm, // qlm(i) for every particle i
 					int i3 = WIGNERINDX6[pnum][2] + 6;
 					// casting to type double is apparently necessary
 					// due to template for multiplying complex numbers
-					wval += static_cast<double>(WIGNERPERM6[pnum])
+					wval += static_cast<double>(WIGNERPERM6[pnum]
+														 *WIGNER6[pnum])
 						     *qlma[i1]*qlma[i2]*qlma[i3];
-			 }
+					}
 	  }
 	  else if (lval == 4) {
 			 // cycle through all distinct permutations
 			 // (9 in total for lval = 4)
+			 complex<double> add;
 			 for (int pnum = 0; pnum != 9; ++pnum) {
+					// positive permutations
 					int i1 = WIGNERINDX4[pnum][0] + 4;
 					int i2 = WIGNERINDX4[pnum][1] + 4;
-					int i3 = WIGNERINDX4[pnum][2] + 4;					
-					wval += static_cast<double>(WIGNERPERM4[pnum])
+					int i3 = WIGNERINDX4[pnum][2] + 4;
+					wval += static_cast<double>(WIGNERPERM4[pnum]
+														 *WIGNER4[pnum])
 						     *qlma[i1]*qlma[i2]*qlma[i3];
+
 			 }
 	  }
-	  // should probably throw an exception here if lval not 4 or 6
-	  {}
+	  else { // should probably throw an exception here
+	  }	  
 
 	  // compute denominator
 	  double qvalue = 0.0;
 	  for (int m = 0; m != 2*lval + 1; ++m) {
 			 // note that norm of complex number is its squared
-			 // magnitude,i.e. norm(x) = |x|^2
+			 // magnitude, i.e. norm(x) = |x|^2
 			 qvalue += norm(qlma[m]);
 	  }
-	  return abs(wval) / pow(qvalue, 1.5);
+	  wval = wval / pow(qvalue, 1.5);
+	  return wval;
 }
 
 // ql:
@@ -184,7 +192,6 @@ vector<double> qls(const array2d& qlm)
 			 // called once for any particular particle configuration
 			 par[0] = i;
 			 ql[i] = Qpars(qlm, par, lval);
-			 std::cout << ql[i] << std::endl;
 	  }
 	  return ql;
 }
@@ -197,33 +204,84 @@ vector<double> qls(const array2d& qlm)
 // In the latter case we just need to pass a matrix
 // of \bar{qlm} rather than qlm.
 
-vector<double> wls(const array2d& qlm)
+vector<complex<double> > wls(const array2d& qlm)
 {
 	  int npar = qlm.shape()[0];
 	  int lval = (qlm.shape()[1] - 1)/ 2;	  
-	  vector<double> wl;
-	  wl.resize(npar);	  
+	  vector<complex<double> > wl;
+	  wl.resize(npar);
+	  vector<int> par(1,0);	  
+
+	  for (array2d::index i = 0; i != npar; ++i)
+	  {
+			 // this is a bit inefficient, since we make a lot of function
+			 // calls and multiplications.  But is saves code replication
+			 // and in any case this function should only need to be
+			 // called once for any particular particle configuration
+			 par[0] = i;
+			 wl[i] = Wpars(qlm, par, lval);
+	  }
+	  return wl;	  
 }
 
 // qlmtildes:
 // Convert matrix of qlm(i) to matrix of \tilde{qlm}(i)
+// \tilde{qlm}(i) is simply a normalised version of vector qlm(i)
 
-void qlmtildes(array2d& qlm, const vector<int>& numneigh, const int lval)
+array2d qlmtildes(const array2d& qlm, const vector<int>& numneigh,
+						const int lval)
 {
-	  // normalise each of rows in the matrix, this gives qlmtilde
 	  int npar = qlm.shape()[0];	  
+	  array2d qlmt(boost::extents[npar][2*lval + 1]);
+	  
+	  // normalise each of rows in the matrix, this gives qlmtilde
 	  for (int i = 0; i != npar; ++i) {
+			 // if particle has no neighbours, all entries in qlm[i]
+			 // will be zero, and so the norm will be zero
 			 if (numneigh[i] >= 1) {
 					double qnorm = 0.0;
-					for (int k = 0; k != 2*lval + 1; ++k) 
+					for (int k = 0; k != 2*lval + 1; ++k) {
 						  qnorm = qnorm + norm(qlm[i][k]);
+					}
 					qnorm = sqrt(qnorm);
-					for (int k = 0; k != 2*lval + 1; ++k) 
-						  qlm[i][k] = qlm[i][k]/qnorm;
+					for (int k = 0; k != 2*lval + 1; ++k) {
+						  qlmt[i][k] = qlm[i][k]/qnorm;
+					}
 			 }
 	  }
+	  return qlmt;
 }
 
+// qlmbars:
+// Return matrix of qlmbar(i), qlm for each particle averaged over
+// all nearest neighbours.  The matrix has dimensions [i,(2l + 1)]
+// See Lechner and Dellago JCP 129, 114707 Equation (6)
+// BUT (!) note there is an error in Lechner Dellago equation:
+// The denominator should be N_b + 1 rather than N_b.
+// This is corrected in:
+// Jungblut and Dellago JCP 134, 104501 (2011) Equation (5)
+
+array2d qlmbars(const array2d& qlm, const vector<vector<int> >& lneigh,
+					 const int lval)
+{
+	  int npar = qlm.shape()[0];
+	  array2d qlmbar(boost::extents[npar][2*lval + 1]);	  
+
+	  for (int i = 0; i != npar; ++i) {
+			 for (int m = 0; m != 2*lval + 1; ++m) {
+					complex<double> qlmval = qlm[i][m];
+					// add contribution to qlmval from neighbours
+					int nn = lneigh[i].size(); // num neighbours
+					for (int nnum = 0; nnum != nn; ++nnum) {
+						  qlmval = qlmval + qlm[lneigh[i][nnum]][m];
+					}
+					qlmbar[i][m] = qlmval / static_cast<double>(nn + 1);
+			 }
+	  }
+	  return qlmbar;
+}
+
+// qlms:
 // Return matrix of qlm(i).  The matrix has dimensions [i,(2l + 1)]
 
 array2d qlms(const vector<Particle>& particles, const Box& simbox,

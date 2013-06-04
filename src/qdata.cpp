@@ -101,17 +101,20 @@ QData::QData(vector<Particle> allps, Box& sbox, int nsur, int nlin, double linva
 	                               // nums for each par
 	  lneigh.resize(npar);
 
-	  /* get both \bar{qlm}[i] and \tilde{qlm}[i] for every particle i.
-		  \bar{qlm}[i] are used to compute big Q
-		  \tidle{qlm}[i] are the normalised vectors used to compute links
-		  for each particle, and hence to decide which particles are xtal.
-		  The xtal particles are then subjected to a cluster analysis, which
-		  gives the size of the largest cluster.
-	  */
-		  
 	  array2d qlm = qlms(allpars, simbox, numneigh, lneigh, lval);
-	  array2d qlmt = qlm;
-	  qlmtildes(qlmt, numneigh, lval);
+	  array2d qlmt = qlmtildes(qlm, numneigh, lval);
+	  // Lechner dellago eq 6
+	  array2d qlmb = qlmbars(qlm, lneigh, lval);
+
+	  // get qls and wls, print for each particle
+	  vector<double> ql = qls(qlm);
+	  // lechner dellago eq 5
+	  vector<double> qlbar = qls(qlmb);
+	  vector<complex<double> > wl = wls(qlm);
+	  for (int i = 0; i != npar; ++i) {
+			 std::cout << i << " " << ql[i] << " " << qlbar[i] << " "
+						  << wl[i] << std::endl;
+	  }
 
 	  // xtal particle nums according to link threshold and min number
 	  // of links

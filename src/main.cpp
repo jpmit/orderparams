@@ -19,8 +19,10 @@ using std::string;
 
 int main(int argc, char* argv[])
 {
-	  if (argc != 2) {
-			 cout << "Syntax: " << argv[0] << " filename.xyz" << endl;
+	  if (argc != 2 and argc != 3) {
+			 cout << "Syntax: " << argv[0] << " filename.xyz" << endl
+					<< "Or:     " << argv[0] << " filename.xyz paramfile"
+					<< endl;
 			 return 1;
 	  }
 
@@ -28,7 +30,16 @@ int main(int argc, char* argv[])
 	  vector<Particle> allpars = readxyz(argv[1]);
 
 	  // read nsurf, lboxx, lboxy, lboxz, zperiodic from params.out file
-	  map<string, string> params = readparams("params.out");
+	  // if we didn't give a name for the parameter file, default to params.out
+	  string pfile;
+	  if (argc == 2) {
+			 pfile = "params.out";
+	  }
+	  else {
+			 pfile = argv[2];
+	  }
+					
+	  map<string, string> params = readparams(pfile);
 	  int nsurf = atoi(params["nparsurf"].c_str());
 	  double lboxx = atof(params["lboxx"].c_str());
 	  double lboxy = atof(params["lboxy"].c_str());
@@ -41,7 +52,7 @@ int main(int argc, char* argv[])
 			 << endl;
 	  
 	  // arguments are lboxx, lboxy, lboxz, neighboursep, periodic?
-	  Box simbox(22.4492409662,21.3857742696,14.2055395823,1.5,false);
+	  Box simbox(lboxx,lboxy,lboxz,1.5,zperiodic);
 
 	  // test OPS using both interfaces
 	  int nlin = 6;
@@ -66,10 +77,10 @@ int main(int argc, char* argv[])
 	  
 	  // second interface
 	  QData q6data(allpars,simbox,nsurf,nlin,linval,6);
-	  //QData q4data(allpars,simbox,nsurf,nlin,linval,4);
-	  cout << "filename: " << argv[1] << std::endl;
-	  cout << "Nclusterq6|Q6cluster|Shapeq6" << std::endl;
-	  cout << q6data.getNCluster() << " "
-			 << q6data.getQCluster() << " "
-			 << q6data.getClusterShape() << std::endl;
+	  QData q4data(allpars,simbox,nsurf,nlin,linval,4);	  
+	  //cout << "filename: " << argv[1] << std::endl;
+	  //cout << "Nclusterq6|Q6cluster|Shapeq6" << std::endl;
+	  //cout << q6data.getNCluster() << " "
+	  //	 << q6data.getQCluster() << " "
+	  //		 << q6data.getClusterShape() << std::endl;
 }

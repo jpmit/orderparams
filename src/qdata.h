@@ -6,9 +6,8 @@
 #include "box.h"
 #include "boost/multi_array.hpp"
 
-/* QData is a class to store data used for the Steindhardt bond order parameters.
-	The class exists since we don't want to recompute spherical harmonics many times.
-*/
+// QData is a class to store data used for the Steindhardt bond order parameters.
+//	The class exists since we don't want to recompute spherical harmonics many times.
 
 class QData
 {

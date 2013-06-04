@@ -10,10 +10,9 @@ using std::pow;
 using std::vector;
 using std::complex;
 
-/* Factorial of an integer.
- */
+// Factorial of an integer.
 
-inline int fact(int n)
+inline int fact(const int n)
 {
 	  int ifact = 1;
 	  if (n < 2)
@@ -23,10 +22,10 @@ inline int fact(int n)
 	  return ifact;
 }
 
-/* Computes the associated Legendre polynomial P_l^m(x), for positive m only.
- */
+// Computes the associated Legendre polynomial P_l^m(x),
+// for positive m only.
 
-double plm(int lval, int mval, double x)
+double plm(const int lval, const int mval, const double x)
 {
 	  double somx2,pm1m,pll;
 
@@ -63,15 +62,17 @@ double plm(int lval, int mval, double x)
 	  }
 }
 
-/* Spherical harmonic Y(l,m,theta).
- */
+// Spherical harmonic Y(l,m,theta,phi).
 
-complex<double> ylm(int lval, int mval, double costheta, double phi)
+complex<double> ylm(const int lval, const int mval,
+						  const double costheta, const double phi)
 {
 	  int absm = abs(mval);
-	  double coeff = sqrt((2.0*lval + 1.0)*fact(lval-absm)/(4.0*PI*fact(lval+absm)));
-	  if (mval < 0)
+	  double coeff = sqrt((2.0*lval + 1.0)*fact(lval-absm)/
+								 (4.0*PI*fact(lval+absm)));
+	  if (mval < 0) {
 			 coeff = coeff * pow(-1,mval);
+	  }
 
 	  double plmval = plm(lval, absm, costheta);
 
