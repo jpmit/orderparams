@@ -24,6 +24,6 @@ std::vector<int> xtalpars(const boost::multi_array<std::complex<double>,2 >&,
 double Qpars(const boost::multi_array<std::complex<double>,2 >&,
 				 const std::vector<int>&, const int);
 std::vector<double> qls(const boost::multi_array<std::complex<double>,2 >&);
-std::vector<std::complex<double> > wls(const boost::multi_array<std::complex<double>,2 >&);
+std::vector<double> wls(const boost::multi_array<std::complex<double>,2 >&);
 
 #endif

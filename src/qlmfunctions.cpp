@@ -111,10 +111,10 @@ double Qpars(const array2d& qlm, // qlm(i) for every particle i
 //	This can be used to get W global, or W cluster, or the w(i)'s
 // (i.e. W for each particle), depending on pnums.
 
-complex<double> Wpars(const array2d& qlm, // qlm(i) for all particles i
-							 const vector<int>& pnums, // particle indices
-							 const int lval) // spherical harmonic number
-                                      // (usually 4 or 6)
+double Wpars(const array2d& qlm, // qlm(i) for all particles i
+				 const vector<int>& pnums, // particle indices
+				 const int lval) // spherical harmonic number
+                             // (usually 4 or 6)
 {
 	  // get a vector which contains qlm averaged over all particles
 	  // with indexes in pnums i.e.
@@ -165,7 +165,9 @@ complex<double> Wpars(const array2d& qlm, // qlm(i) for all particles i
 			 qvalue += norm(qlma[m]);
 	  }
 	  wval = wval / pow(qvalue, 1.5);
-	  return wval;
+
+	  // Return real part, imaginary part should be zero
+	  return real(wval);
 }
 
 // ql:
@@ -204,11 +206,11 @@ vector<double> qls(const array2d& qlm)
 // In the latter case we just need to pass a matrix
 // of \bar{qlm} rather than qlm.
 
-vector<complex<double> > wls(const array2d& qlm)
+vector<double> wls(const array2d& qlm)
 {
 	  int npar = qlm.shape()[0];
 	  int lval = (qlm.shape()[1] - 1)/ 2;	  
-	  vector<complex<double> > wl;
+	  vector<double> wl;
 	  wl.resize(npar);
 	  vector<int> par(1,0);	  
 

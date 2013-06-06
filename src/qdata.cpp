@@ -18,7 +18,8 @@ using std::norm;
 
 typedef boost::multi_array<complex<double>,2> array2d;
 typedef boost::multi_array<double,2> tensor;
-typedef boost:: adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> graph;
+typedef boost:: adjacency_list <boost::vecS, boost::vecS,
+										  boost::undirectedS> graph;
 
 // QData stores qlm in its various forms for each particle in the system
 // Usually l=6 or 4 but the code will accept any value
@@ -92,8 +93,8 @@ QData::QData(vector<Particle> allps, Box& sbox, int nsur, int nlin, double linva
 		 linkval(linval),
 		 lval(lv)
 {
-	  /* the constructor is used to compute xps, clusternums, and qcluster.
-		  These are stored in object */
+	  // the constructor is used to compute xps, clusternums, and qcluster.
+	  // These are stored in object 
 
 	  vector<Particle>::size_type npar = allpars.size();
   	  vector<int> numneigh(npar,0); // num neighbours for each particle
@@ -106,15 +107,12 @@ QData::QData(vector<Particle> allps, Box& sbox, int nsur, int nlin, double linva
 	  // Lechner dellago eq 6
 	  array2d qlmb = qlmbars(qlm, lneigh, lval);
 
-	  // get qls and wls, print for each particle
-	  vector<double> ql = qls(qlm);
+	  // get qls and wls
+	  ql = qls(qlm);
+	  wl = wls(qlm);	  
 	  // lechner dellago eq 5
-	  vector<double> qlbar = qls(qlmb);
-	  vector<complex<double> > wl = wls(qlm);
-	  for (int i = 0; i != npar; ++i) {
-			 std::cout << i << " " << ql[i] << " " << qlbar[i] << " "
-						  << wl[i] << std::endl;
-	  }
+	  qlbar = qls(qlmb);
+	  wlbar = wls(qlmb);
 
 	  // xtal particle nums according to link threshold and min number
 	  // of links

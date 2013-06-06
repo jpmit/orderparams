@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <iomanip>
 #include <string>
 #include "readwrite.h"
 #include "box.h"
@@ -48,11 +49,11 @@ int main(int argc, char* argv[])
 	  bmap["True"] = true;
 	  bmap["False"] = false;	 
 	  bool zperiodic = bmap[params["zperiodic"]];
-	  cout << lboxx << " " << lboxy << " " << lboxz << " " << nsurf << " " << zperiodic
-			 << endl;
+//	  cout << lboxx << " " << lboxy << " " << lboxz << " " << nsurf << " " << zperiodic
+//			 << endl;
 	  
 	  // arguments are lboxx, lboxy, lboxz, neighboursep, periodic?
-	  Box simbox(lboxx,lboxy,lboxz,1.5,zperiodic);
+	  Box simbox(lboxx,lboxy,lboxz,1.35,zperiodic);
 
 	  // test OPS using both interfaces
 	  int nlin = 6;
@@ -77,7 +78,19 @@ int main(int argc, char* argv[])
 	  
 	  // second interface
 	  QData q6data(allpars,simbox,nsurf,nlin,linval,6);
-	  QData q4data(allpars,simbox,nsurf,nlin,linval,4);	  
+	  QData q4data(allpars,simbox,nsurf,nlin,linval,4);
+
+	  // print q4, q4bar, w4, w4bar, q6, q6bar, w6, w6bar
+	  // for all particles
+	  cout << "# q4 q4bar w4 w4bar q6 q6bar w6 w6bar" << endl;
+	  cout << std::setprecision(6) << std::fixed;
+	  for (int i = 0; i != allpars.size(); ++i) {
+			 cout	<< q4data.ql[i] << " " << q4data.qlbar[i] << " "
+					<< q4data.wl[i] << " " << q4data.wlbar[i] << " "
+					<< q6data.ql[i] << " " << q6data.qlbar[i] << " "
+					<< q6data.wl[i] << " " << q6data.wlbar[i] << endl;
+	  }
+	  
 	  //cout << "filename: " << argv[1] << std::endl;
 	  //cout << "Nclusterq6|Q6cluster|Shapeq6" << std::endl;
 	  //cout << q6data.getNCluster() << " "
