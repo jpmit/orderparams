@@ -12,6 +12,7 @@
 class Box
 {
 public:
+	  Box(){ }
      Box(double lx, double ly, double lz, double ns = 1.5, bool pz = false) :
 	  lboxx(lx), lboxy(ly), lboxz(lz), nsep(ns), nsepsq(ns*ns), periodicz(pz){}
 	  inline void sep(const Particle& p1, const Particle& p2, double* s) const;

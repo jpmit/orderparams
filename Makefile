@@ -7,7 +7,7 @@ LDFLAGS =
 LDLIBS = -l gsl -l blas
 OBJS = $(addprefix $(OBJDIR)/, main.o conncomponents.o orderparameter.o \
          opfunctions.o readwrite.o qlmfunctions.o gyration.o diagonalize.o \
-         qdata.o)
+         qdata.o particlesystem.o)
 
 all: orderparams
 
@@ -35,6 +35,8 @@ diagonalize.o : diagonalize.cpp
 
 qdata.o : qdata.cpp qdata.h box.h particle.h qlmfunctions.h constants.h \
           conncomponents.h orderparameter.h utilityfunctions.h gyration.h
+
+particlesystem.o : particlesystem.cpp particlesystem.h readwrite.h box.h
 
 clean:
 	rm -f $(OBJDIR)/*.o
