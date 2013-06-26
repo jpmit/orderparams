@@ -2,19 +2,19 @@
 SRCDIR = src
 OBJDIR = src
 CXX = g++
-CXXFLAGS = -Wno-deprecated -O3
+CXXFLAGS = -Wno-deprecated -g
 LDFLAGS = 
 LDLIBS = -l gsl -l blas
 OBJS = $(addprefix $(OBJDIR)/, main.o conncomponents.o orderparameter.o \
          opfunctions.o readwrite.o qlmfunctions.o gyration.o diagonalize.o \
-         qdata.o particlesystem.o)
+         qdata.o particlesystem.o orderparameters.o)
 
 all: orderparams
 
 orderparams: $(OBJS)
 	g++ $(LDFLAGS) -o test/testorderparams $(OBJS) $(LDLIBS)
 
-main.o : main.cpp readwrite.h box.h orderparameter.h gyration.h qdata.h
+main.o : main.cpp particlesystem.h orderparameters.h qdata.h constants.h
 
 conncomponents.o : conncomponents.cpp particle.h box.h
 
@@ -37,6 +37,8 @@ qdata.o : qdata.cpp qdata.h box.h particle.h qlmfunctions.h constants.h \
           conncomponents.h orderparameter.h utilityfunctions.h gyration.h
 
 particlesystem.o : particlesystem.cpp particlesystem.h readwrite.h box.h
+
+orderparameters.o : orderparameters.cpp
 
 clean:
 	rm -f $(OBJDIR)/*.o

@@ -233,7 +233,7 @@ vector<double> wls(const array2d& qlm)
 array2d qlmtildes(const array2d& qlm, const vector<int>& numneigh,
 						const int lval)
 {
-	  int npar = qlm.shape()[0];	  
+	  int npar = qlm.shape()[0];
 	  array2d qlmt(boost::extents[npar][2*lval + 1]);
 	  
 	  // normalise each of rows in the matrix, this gives qlmtilde

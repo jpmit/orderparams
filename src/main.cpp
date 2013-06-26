@@ -1,16 +1,21 @@
 #include <iostream>
 #include <iomanip>
+#include <vector>
 #include <string>
 #include "particlesystem.h"
-#include "orderparameter.h"
-#include "gyration.h"
+#include "orderparameters.h"
 #include "qdata.h"
+#include "constants.h"
+#include "utility.h"
 
 using std::cout;
 using std::endl;
 using std::string;
 
 // Compute the values of all order parameters for a given configuration
+// Currently there are 45 different order parameters output, but a lot
+// of these are 'duplicated' because there are two different clusters
+// (see below).
 
 int main(int argc, char* argv[])
 {
@@ -35,83 +40,162 @@ int main(int argc, char* argv[])
 	  // q6numlinks - number of links a particle needs to be xtal
 	  ParticleSystem psystem(pfile);
 
-	  // create the cluster data
+	  // compute the qlm data
 	  // warning: at the moment the number of links, and the
 	  // threshold value for a link is the same for both l=4 and l=6
 	  // (psystem.linval and psystem.nlinks respectively)
-	  QData q6data(psystem.allpars,psystem.simbox,psystem.nsurf,
-						psystem.nlinks,psystem.linval,6);
-	  QData q4data(psystem.allpars,psystem.simbox,psystem.nsurf,
-						psystem.nlinks,psystem.linval,4);
+	  QData q6data(psystem, 6);
+	  QData q4data(psystem, 4);
 
-	  // print q4, q4bar, w4, w4bar, q6, q6bar, w6, w6bar
-	  // for all particles
-	  // and find which are hcp, fcc etc.
-	  int nbcc, nhcp, nfcc, nliq;
-	  nbcc = nhcp = nfcc = nliq = 0;
 	  
-	  cout << "# q4 q4bar w4 w4bar q6 q6bar w6 w6bar" << endl;
-	  cout << std::setprecision(6) << std::fixed;
-	  for (int i = 0; i != psystem.allpars.size(); ++i) {
-			 cout	<< q4data.ql[i] << " " << q4data.qlbar[i] << " "
-					<< q4data.wl[i] << " " << q4data.wlbar[i] << " "
-					<< q6data.ql[i] << " " << q6data.qlbar[i] << " "
-					<< q6data.wl[i] << " " << q6data.wlbar[i] << endl;
+	  // from q6data and q4 data, classify each particle as bcc, hcp etc.
+	  // using Lechner Dellago approach.
+	  vector<LDCLASS> ldclass = classifyparticlesld(psystem, q4data,
+																	q6data);
 
-			 // based on qs and ws, work out if fcc, hcp, bcc, or other
-			 // need to optimize these thresholds later!
-			 if (i >= psystem.nsurf) {
-					if (q6data.qlbar[i] > 0.3) {
-						  // the particle is a solid particle
-						  if (q6data.wlbar[i] > 0.0) {
-								 // the particle is BCC
-								 nbcc += 1;
-//								 allpars[i].symbol = 'Y';
-						  }
-						  else {
-								 if (q4data.wlbar[i] > 0.0) {
-										// the particle is HCP
-										nhcp += 1;
-//										allpars[i].symbol = 'P';
-								 }
-								 else {
-										// the particle is FCC
-										nfcc += 1;
-//										allpars[i].symbol = 'S';
-								 }
-						  }
-					}
-					else {
-						  // the particle is liquid
-						  nliq += 1;
-//						  allpars[i].symbol = 'N';
-					}
-			 }
-	  }
+	  // from q6 data only, classify each particle as either crystalline
+	  // or liquid, using TenWolde Frenkel approach
+	  vector<TFCLASS> tfclass = classifyparticlestf(psystem, q6data);
 
-	  // print nhcp, nfcc, nbcc, nliq
-	  cout << "nbcc nhcp nfcc nliq" << endl << nbcc << " " << nhcp
-			 << " " << nfcc << " " << nliq << endl;
+	  // indices into particle vector (psystem.allpars) of those
+	  // particles in the ten-Wolde Frenkel largest cluster and
+	  // those in the Lechner Dellago cluster.
+	  vector<int> tfcnums = largestclustertf(psystem, tfclass);
+	  vector<int> ldcnums = largestclusterld(psystem, ldclass);
 
-	  // save file
-//	  if (printsymbols) {
-//			 writexyz(allpars, savefile);
-//	  }
+	  // compute each order parameter in turn and print to stdout.
+	  // See orderparams.cpp for these functions.
+
+	  //////////////////////////////////////////////////////////////////
+	  // The following order parameters are associated in some way with
+	  // properties of the largest cluster.  There are two approaches to
+	  // determining this cluster, which I call Lecher Dellage (LD) and
+	  // ten-Wolde Frenkel (TF), and thus two different clusters.  All
+	  // of the OPs are computed for both clusters.
+	  /////////////////////////////////////////////////////////////////
+	  
+	  // Size of cluster by LD method
+	  cout << "N_ld " << csizeld(ldcnums) << endl;
+
+	  // Size of cluster by TF method
+	  cout << "N_tf " << csizetf(tfcnums) << endl;
+	  
+	  // fraction of bcc pars in LD cluster
+	  cout << "n_bccLD " << parfrac(ldclass, ldcnums, BCC) << endl;
+	  
+	  // fraction of bcc pars in TF cluster	  
+	  cout << "n_bccTF " << parfrac(ldclass, tfcnums, BCC) << endl;
+	  
+	  // fraction of fcc pars in LD cluster
+	  cout << "n_fccLD " << parfrac(ldclass, ldcnums, FCC) << endl;
+	  
+	  // fraction of fcc pars in TF cluster	  
+	  cout << "n_fccTF " << parfrac(ldclass, tfcnums, FCC) << endl;
+	  
+	  // fraction of hcp pars in LD cluster
+	  cout << "n_hcpLD " << parfrac(ldclass, ldcnums, HCP) << endl;
+	  
+	  // fraction of hcp pars in TF cluster	  
+	  cout << "n_hcpTF " << parfrac(ldclass, tfcnums, HCP) << endl;
+	  
+	  // fraction of icos pars in LD cluster
+	  cout << "n_icosLD " << parfrac(ldclass, ldcnums, ICOS) << endl;
+	  
+	  // // fraction of icos pars in TF cluster	  
+	  cout << "n_icosTF " << parfrac(ldclass, tfcnums, ICOS) << endl;;
+	 
+	  // // average Q6 of LD cluster
+	  // cout << "Q6clus " << qavgroup(q6data, ldcnums, 6);
+
+	  // // average Q6 of TF cluster
+	  // cout << "Q6clus " << qavgroup(q6data, tfcnums, 6);
+	  	 
+	  // // average Q4 of LD cluster
+	  // cout << "Q4clus " << qavgroup(q4data, ldcnums, 4);
+
+	  // // average Q4 of TF cluster
+	  // cout << "Q4clus " << qavgroup(q4data, tfcnums, 4);
+
+	  // // number of liquid like particles with at least one neighbour in
+	  // // LD cluster.  Note that we could pass either q6data.lneigh or
+	  // // q4data.lneigh, since these are identical 
+	  // cout << "N_s " << nliquidneighld(ldclass, ldcnums, q6data.lneigh);
+
+	  // // same as above but for TF cluster
+	  // cout << "N_s " << nliquidneightf(tfclass, tfcnums, q6data.lneigh);	  
+
+	  // // total number of connections for all liquid-like particles with
+	  // // at least one neighbour in cluster for LD cluster
+	  // cout << "N_l " << nconnectionsliqld(ldcnums, q6data, ldclass);
+
+	  // // same as above but for TF cluster
+	  // cout << "N_l " << nconnectionsliqtf(tfcnums, q6data, tfclass);
+
+	  // average q6 of liquid-like particles with at least one neighbour
+	  // in cluster for LD cluster
+
+	  // same as above but for TF cluster
+
+	  // average q4 of liquid-like particles with at least one neighbour
+	  // in cluster for LD cluster
+
+	  // same as above but for LD cluster
+
+	  // potential energy (per particle) for LD cluster
+
+	  // potential energy (per particle) for TF cluster
+
+	  // largest eigenvalue of gyration tensor for LD cluster
+
+	  // largest eigenvalue of gyration tensor for TF cluster
+
+	  // middle eigenvalue of gyration tensor for LD cluster
+
+	  // middle eigenvalue of gyration tensor for TF cluster
+
+	  // smallest eigenvalue of gyration tensor for LD cluster
+
+	  // smallest eigenvalue of gyration tensor for TF cluster
+
+	  // (3,3) element of non-diagonalized gyration tensor for LD
+	  // cluster
+
+	  // (3,3) element of non-diagonalized gyration tensor for TF
+	  // cluster
+
+	  // largest eigenvalue of top-diagonalised gyration tensor for LD
+	  // cluster
+
+	  // largest eigenvalue of top-diagonalised gyration tensor for TF
+	  // cluster
+
+	  // smallest eigenvalue of top-diagonalised gyration tensor for LD
+	  // cluster
+
+	  // smallest eigenvalue of top-diagonalised gyration tensor for TF
+	  // cluster
+
+     //////////////////////////////////////////////////////////////////
+	  // These order parameter are 'global' i.e. for the entire system
+	  // (that is, no mention of a cluster of any kind!).
+	  //////////////////////////////////////////////////////////////////
+
+	  // fraction of bcc particles in entire system
+	  cout << "s_bcc " << parfrac(ldclass, range(0,psystem.allpars.size()), BCC) << endl;
+	  
+	  // fraction of fcc particles in entire system
+	  cout << "s_fcc " << parfrac(ldclass, range(0,psystem.allpars.size()), FCC) << endl;
+	  
+	  // fraction of hcp particles in entire system
+	  cout << "s_hcp " << parfrac(ldclass, range(0,psystem.allpars.size()), HCP) << endl;
+
+	  // fraction of icosahedral particles in entire system
+	  cout << "s_icos " << parfrac(ldclass, range(0,psystem.allpars.size()), ICOS) << endl;
+	  
+	  // potential energy per (moving) particle of entire system
+
+	  // average q6 of all particles in system
+
+	  // average q4 of all particles in system
+	  
 }
-
-	  // 1st interface
-/*	  
-	  NCluster ncluster(nsurf,nlin,linval,6);
-	  QCluster q6cluster(nsurf,nlin,linval,6);
-	  QCluster q4cluster(nsurf,nlin,linval,4);
-	  QGlobal q6(nsurf,6);
-	  QGlobal q4(nsurf,4);
-	  GTensor gyt(nsurf,nlin,linval,6);
-	  cout << "Ncluster " << ncluster(allpars,simbox)
-			 << " Q6cluster " << q6cluster(allpars,simbox)
-			 << " Q4cluster " << q4cluster(allpars,simbox)
-			 << " Q6 " << q6(allpars,simbox)
-			 << " Q4 " << q4(allpars,simbox)
-			 << " Shape " << gyt(allpars,simbox)
-			 << std::endl;
-*/

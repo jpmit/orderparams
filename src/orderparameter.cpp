@@ -12,7 +12,7 @@
 #include "conncomponents.h"
 #include "qlmfunctions.h"
 #include "gyration.h"
-#include "utilityfunctions.h"
+#include "utility.h"
 #include "readwrite.h"
 
 using std::vector;

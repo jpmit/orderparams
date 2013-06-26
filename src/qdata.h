@@ -2,34 +2,50 @@
 #define QDATA_H
 
 #include <vector>
-#include "particle.h"
-#include "box.h"
-#include "boost/multi_array.hpp"
+#include "particlesystem.h"
+#include "typedefs.h"
+#include "constants.h"
 
-// QData is a class to store data used for the Steindhardt bond order
-// parameters. The class exists since we don't want to recompute
+// QData is a struct to store data used for the Steindhardt bond order
+// parameters. The struct exists since we don't want to recompute
 // spherical harmonics many times.
 
-class QData
+struct QData
 {
 public:
-	  QData(std::vector<Particle> allps, Box& sbox,
-			  int nsur, int nlin, double linval, int lv);
+	  QData(const ParticleSystem& psystem, int lval);
 
-	  // member functions for returning OPs 
+	  // store the l value, usually either 4 or 6
+	  int lval;
 	  
-	  int getNCluster();
-	  double getQCluster();
-	  double getQGlobal();
-	  double getClusterShape();
+	  // we store the number of neighbours for each particle as well as
+	  // a vector of neighbour particles for each particle in this
+	  // structure. This is a slightly annoying place to store this
+	  // information.  It is here since the neighbours are computed when
+	  // calculating the qlm matrix (see functions qlms).
+	  vector<int> numneigh;
+	  vector<vector<int> > lneigh;
 
+	  // the complete qlm matrix
+	  array2d qlm;
+	  
 	  // ql, \bar{ql}, wl, \bar{wl} for each particle i
 	  std::vector<double> ql;
 	  std::vector<double> qlbar;
 	  std::vector<double> wl;
 	  std::vector<double> wlbar;
+};
+
+std::vector<TFCLASS> classifyparticlestf(const ParticleSystem&,
+													  const QData&);
+std::vector<LDCLASS> classifyparticlesld(const ParticleSystem&,
+													  const QData&, const QData&);
+std::vector<int> largestclusterld(const ParticleSystem&,
+											 const std::vector<LDCLASS>&);
+std::vector<int> largestclustertf(const ParticleSystem&,
+											 const std::vector<TFCLASS>&);
 	  
-private:
+/*private:
 	  double getqcluster(const boost::multi_array<std::complex<double>,2>&,
 								const std::vector<int>&,
 								const std::vector<int>&);
@@ -37,23 +53,12 @@ private:
 										 const std::vector<int>&,
 										 const std::vector<std::vector<int> >&);
 
-	  /* we store all parameters passed in constructor */
-	  
-	  std::vector<Particle> allpars; // particle positions
-	  Box simbox;
-	  int nsurf;      // num surface particles (don't count as part of the cluster)
-	  int nlinks;     // min num xtal links required for particle to be xtal
-	  double linkval; // min value for link to be considered xtal
-	  int lval;       // spherical harmonic num, usually 4 or 6
 
-	  /* parameters stored to return order parameters */
 	  
 	  std::vector<int> xps; // indexes of particles identified as xtal
 	  std::vector<int> cnums; // indexes of pars in largest cluster
 	  double qcluster; // Q value of cluster
 	  double qglobal; // Q value of entire system (excluding surface particles)
-
-
-};
+*/
 
 #endif

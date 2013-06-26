@@ -6,7 +6,7 @@
 #include "particle.h"
 #include "box.h"
 #include "conncomponents.h"
-#include "utilityfunctions.h"
+#include "utility.h"
 
 /* gyration.cpp - functions to compute the gyration tensor.
 	Be warned, periodic boundary conditions need to be removed before computing.

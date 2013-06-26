@@ -4,15 +4,14 @@
 #include <algorithm>
 #include <numeric>
 #include <utility>
-#include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
+#include "typedefs.h"
 #include "particle.h"
 #include "box.h"
 
 using std::vector;
 using std::cout;
 using std::endl;
-typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> graph;
 
 /* Create graph with crystal pars as nodes and vertices between neighbours.
  */
@@ -23,10 +22,9 @@ graph getxgraph(const vector<Particle>& particles, const vector<int>& xpars, con
 	  vector<int>::size_type nxtal = xpars.size();
 	  vector<int>::size_type i,j;
 	  double sep;
-	  
-	  for (i = 0; i != nxtal; ++i) 
+	  for (i = 0; i != nxtal; ++i)
 			 for (j = i + 1; j != nxtal; ++j)
-					if (simbox.isneigh(particles[xpars[i]],particles[xpars[j]],sep))
+					if (simbox.isneigh(particles[xpars[i]],particles[xpars[j]], sep))
 						  add_edge(i, j, G);
 
 	  return G;
