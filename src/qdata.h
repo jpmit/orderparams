@@ -44,21 +44,5 @@ std::vector<int> largestclusterld(const ParticleSystem&,
 											 const std::vector<LDCLASS>&);
 std::vector<int> largestclustertf(const ParticleSystem&,
 											 const std::vector<TFCLASS>&);
-	  
-/*private:
-	  double getqcluster(const boost::multi_array<std::complex<double>,2>&,
-								const std::vector<int>&,
-								const std::vector<int>&);
-	  std::vector<int> getxpars(const boost::multi_array<std::complex<double>,2>&,
-										 const std::vector<int>&,
-										 const std::vector<std::vector<int> >&);
-
-
-	  
-	  std::vector<int> xps; // indexes of particles identified as xtal
-	  std::vector<int> cnums; // indexes of pars in largest cluster
-	  double qcluster; // Q value of cluster
-	  double qglobal; // Q value of entire system (excluding surface particles)
-*/
 
 #endif

@@ -13,8 +13,7 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-/* Create graph with crystal pars as nodes and vertices between neighbours.
- */
+// Create graph with crystal pars as nodes and vertices between neighbours.
 
 graph getxgraph(const vector<Particle>& particles, const vector<int>& xpars, const Box& simbox)
 {
@@ -30,26 +29,7 @@ graph getxgraph(const vector<Particle>& particles, const vector<int>& xpars, con
 	  return G;
 }
 
-/* Bopxbulk is the number of particles in largest cluster (largest connected component).
- */
-
-int bopxbulk(const graph& g)
-{
-	  // compute number of connected components
-	  vector<int> component(num_vertices(g));
-	  int num = connected_components(g, &component[0]);
-
-	  // sort each particle into one of the connected components
-	  vector<int> ncomp(num,0);
-	  for (vector<int>::size_type i = 0; i != component.size(); ++i)
-			 ++ncomp[component[i]];
-
-	  // max element returns iterator so dereference to give integer
-	  return *max_element(ncomp.begin(),ncomp.end());
-}
-
-/* Return vector of ints containing nodes (particle nums) of largest connected component.
- */
+// Return vector of ints containing nodes (particle nums) of largest connected component.
 
 vector<int> largestcomponent(const graph& G)
 {

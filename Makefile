@@ -5,7 +5,7 @@ CXX = g++
 CXXFLAGS = -Wno-deprecated -g
 LDFLAGS = 
 LDLIBS = -l gsl -l blas
-OBJS = $(addprefix $(OBJDIR)/, main.o conncomponents.o orderparameter.o \
+OBJS = $(addprefix $(OBJDIR)/, main.o conncomponents.o \
          opfunctions.o readwrite.o qlmfunctions.o gyration.o diagonalize.o \
          qdata.o particlesystem.o orderparameters.o)
 
@@ -17,10 +17,6 @@ orderparams: $(OBJS)
 main.o : main.cpp particlesystem.h orderparameters.h qdata.h constants.h
 
 conncomponents.o : conncomponents.cpp particle.h box.h
-
-orderparameter.o : orderparameter.cpp orderparameter.h box.h particle.h \
-                   constants.h opfunctions.h conncomponents.h qlmfunctions.h \
-                   gyration.h utilityfunctions.h readwrite.h
 
 opfunctions.o : opfunctions.cpp constants.h
 

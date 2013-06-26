@@ -8,7 +8,6 @@
 #include "qlmfunctions.h"
 #include "constants.h"
 #include "conncomponents.h"
-#include "orderparameter.h"
 #include "utility.h"
 #include "typedefs.h"
 
