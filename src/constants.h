@@ -8,7 +8,7 @@ const double PI = 3.14159265358979;
 // each particle as FCC (0), HCP (1), BCC (2), LIQUID (3), ICOS (4),
 // OTHER (5).  For TF, we classify each particle as LIQUID (0) or
 // XTAL (1). Unfortunately we need different names for LD and TF to
-// avoid collision here.
+// avoid collision here (this is a feature of enums).
 
 enum LDCLASS {FCC, HCP, BCC, LIQUID, ICOS, SURFACE};
 

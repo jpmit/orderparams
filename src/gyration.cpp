@@ -1,12 +1,11 @@
 #include <iostream>
 #include <vector>
-#include "boost/multi_array.hpp"
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/connected_components.hpp>
+#include "particlesystem.h"
 #include "particle.h"
 #include "box.h"
 #include "conncomponents.h"
 #include "utility.h"
+#include "readwrite.h"
 
 /* gyration.cpp - functions to compute the gyration tensor.
 	Be warned, periodic boundary conditions need to be removed before computing.
@@ -15,11 +14,73 @@
 
 using std::vector;
 
-typedef boost::multi_array<double,2> tensor;
-typedef boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> graph;
+// Take positions of particles in largest cluster.  
+//	Return particles in the largest cluster, but without periodic BCS.
+//	The trick here is to replicate the system in x and y directions,
+//	then to find the largest cluster in this large system
+//	(note the system is assumed not to be periodic in z)
 
-/* Center of mass of particles.
- */
+vector<Particle> posnoperiodic(const vector<Particle>& cpars,
+										 const Box& simbox)
+{
+	  const vector<Particle>::size_type ncl = cpars.size();
+	  const vector<Particle> repcpars = replicate(cpars, simbox);
+
+	  // hack to ignore periodic bcs
+	  Box bigbox = simbox;
+	  bigbox.lboxx *= 20;
+	  bigbox.lboxy *= 20;
+
+	  graph xgraph = getxgraph(repcpars, range(0, repcpars.size()), bigbox);
+	  vector<int> cluspars = largestcomponent(xgraph);
+
+	  // create vector of cluster positions
+	  vector<Particle> ret;
+	  ret.resize(ncl);
+	  for (vector<Particle>::size_type i = 0; i != ncl; ++i) {
+			 ret[i] = repcpars[cluspars[i]];
+	  }
+
+	  return ret;
+}
+
+// Replicate particles in x and y directions.
+
+vector<Particle> replicate(const vector<Particle>& pars, const Box& simbox)
+{
+	  const vector<Particle>::size_type npar = pars.size();
+	  vector<Particle> newpars;
+	  newpars.resize(9 * npar);
+
+	  for (vector<Particle>::size_type i = 0; i != npar; ++i) {
+			 for (int j = 0; j != 9; ++j)
+					newpars[i + j*npar] = pars[i];
+			 // top
+			 newpars[i + npar].pos[1] += simbox.lboxy;
+			 // top right
+			 newpars[i + 2*npar].pos[0] += simbox.lboxx;
+			 newpars[i + 2*npar].pos[1] += simbox.lboxy;			 
+			 // right
+			 newpars[i + 3*npar].pos[0] += simbox.lboxx;
+			 // bottom right
+			 newpars[i + 4*npar].pos[0] += simbox.lboxx;
+			 newpars[i + 4*npar].pos[1] -= simbox.lboxy;			 			 
+			 // bottom
+			 newpars[i + 5*npar].pos[1] -= simbox.lboxy;			 			 
+			 // bottom left
+			 newpars[i + 6*npar].pos[0] -= simbox.lboxx;
+			 newpars[i + 6*npar].pos[1] -= simbox.lboxy;			 			 
+			 // left
+			 newpars[i + 7*npar].pos[0] -= simbox.lboxx;
+			 // top left
+			 newpars[i + 8*npar].pos[0] -= simbox.lboxx;
+			 newpars[i + 8*npar].pos[1] += simbox.lboxy;
+	  }
+
+	  return newpars;
+}
+
+// Center of mass of particles.
 
 vector<double> cofmass(const vector<Particle>& particles)
 {
@@ -35,14 +96,11 @@ vector<double> cofmass(const vector<Particle>& particles)
 	  cm[0] /= npar;
 	  cm[1] /= npar;
 	  cm[2] /= npar;
-
-	  //std::cout << cm[0] << " " << cm[1] << " " << cm[2] << std::endl;
 	  
 	  return cm;
 }
 
-/* Radius of gyration tensor (not diagonalised).
- */
+// Radius of gyration tensor (not diagonalised).
 
 tensor gytensor(const vector<Particle>& particles)
 {
@@ -77,71 +135,27 @@ tensor gytensor(const vector<Particle>& particles)
 	  return gyt;
 }
 
-/* Take positions of particles in largest cluster.  
-	Return particles in the largest cluster, but without periodic BCS.
-	The trick here is to replicate the system in x and y directions,
-	then to find the largest cluster in this large system
-	(note the system is assumed not to be periodic in z)
-*/
+// Return radius of gyration tensor
+// pars should be 
 
-vector<Particle> xtalposnoperiodic(const vector<Particle>& cpars, const Box& simbox)
+tensor getgytensor(const ParticleSystem& psystem, const vector<int>& cnums)
 {
-	  const vector<Particle>::size_type ncl = cpars.size();
-	  const vector<Particle> repcpars = replicate(cpars, simbox);
-
-	  // hack to ignore periodic bcs
-	  Box bigbox = simbox;
-	  bigbox.lboxx *= 20;
-	  bigbox.lboxy *= 20;
-
-	  graph xgraph = getxgraph(repcpars, range(0, repcpars.size()), bigbox);
-	  vector<int> cluspars = largestcomponent(xgraph);
-
-	  // create vector of cluster positions
-	  vector<Particle> ret;
-	  ret.resize(ncl);
+	  // build up vector of particles which are largest cluster only
+	  vector<Particle>::size_type ncl = cnums.size();
+	  vector<Particle> clusterpars(ncl);	  
 	  for (vector<Particle>::size_type i = 0; i != ncl; ++i) {
-			 ret[i] = repcpars[cluspars[i]];
+			 clusterpars[i].pos[0] = psystem.allpars[cnums[i]].pos[0];
+			 clusterpars[i].pos[1] = psystem.allpars[cnums[i]].pos[1];
+			 clusterpars[i].pos[2] = psystem.allpars[cnums[i]].pos[2];
+			 // setting the symbol is not really necessary
+			 clusterpars[i].symbol = 'S';
 	  }
 
-	  return ret;
-}
+	  // take away periodic bcs
+	  vector<Particle> cparsnop = posnoperiodic(clusterpars, psystem.simbox);  
+	  writexyz(cparsnop, "testrep.xyz");
 
-/* Replicate particles in x and y directions.
- */
-
-vector<Particle> replicate(const vector<Particle>& pars, const Box& simbox)
-{
-	  const vector<Particle>::size_type npar = pars.size();
-	  vector<Particle> newpars;
-	  newpars.resize(9 * npar);
-
-	  for (vector<Particle>::size_type i = 0; i != npar; ++i) {
-			 for (int j = 0; j != 9; ++j)
-					newpars[i + j*npar] = pars[i];
-			 // top
-			 newpars[i + npar].pos[1] += simbox.lboxy;
-			 // top right
-			 newpars[i + 2*npar].pos[0] += simbox.lboxx;
-			 newpars[i + 2*npar].pos[1] += simbox.lboxy;			 
-			 // right
-			 newpars[i + 3*npar].pos[0] += simbox.lboxx;
-			 // bottom right
-			 newpars[i + 4*npar].pos[0] += simbox.lboxx;
-			 newpars[i + 4*npar].pos[1] -= simbox.lboxy;			 			 
-			 // bottom
-			 newpars[i + 5*npar].pos[1] -= simbox.lboxy;			 			 
-			 // bottom left
-			 newpars[i + 6*npar].pos[0] -= simbox.lboxx;
-			 newpars[i + 6*npar].pos[1] -= simbox.lboxy;			 			 
-			 // left
-			 newpars[i + 7*npar].pos[0] -= simbox.lboxx;
-			 // top left
-			 newpars[i + 8*npar].pos[0] -= simbox.lboxx;
-			 newpars[i + 8*npar].pos[1] += simbox.lboxy;
-	  }
-
-	  return newpars;
+	  return gytensor(cparsnop);
 }
 
 /* uncomment and compile with conncomponents.cpp to test gyration tensor

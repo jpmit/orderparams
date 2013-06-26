@@ -7,6 +7,7 @@
 #include "qdata.h"
 #include "constants.h"
 #include "utility.h"
+#include "gyration.h"
 
 using std::cout;
 using std::endl;
@@ -46,7 +47,6 @@ int main(int argc, char* argv[])
 	  // (psystem.linval and psystem.nlinks respectively)
 	  QData q6data(psystem, 6);
 	  QData q4data(psystem, 4);
-
 	  
 	  // from q6data and q4 data, classify each particle as bcc, hcp etc.
 	  // using Lechner Dellago approach.
@@ -62,6 +62,19 @@ int main(int argc, char* argv[])
 	  // those in the Lechner Dellago cluster.
 	  vector<int> tfcnums = largestclustertf(psystem, tfclass);
 	  vector<int> ldcnums = largestclusterld(psystem, ldclass);
+
+	  // indices of liquid like particles that have at least one
+	  // neighbour in the cluster, for both ld and tf
+	  vector<int> ldliquid1nums = nparatleastone(ldclass, ldcnums,
+																LIQUID, q6data.lneigh);
+	  vector<int> tfliquid1nums = nparatleastone(tfclass, tfcnums,
+																LIQ, q6data.lneigh);
+
+	  // indexes of all particles (minus surface particles)
+	  vector<int> pindices = range(psystem.nsurf, psystem.allpars.size());
+
+	  // radius of gyration tensor for both clusters
+	  tensor tfgtensor = getgytensor(psystem, tfcnums);
 
 	  // compute each order parameter in turn and print to stdout.
 	  // See orderparams.cpp for these functions.
@@ -116,13 +129,13 @@ int main(int argc, char* argv[])
 	  // average Q4 of TF cluster
 	  cout << "Q4clusTF " << qavgroup(q4data, tfcnums) << endl;
 
-	  // // number of liquid like particles with at least one neighbour in
-	  // // LD cluster.  Note that we could pass either q6data.lneigh or
-	  // // q4data.lneigh, since these are identical 
-	  // cout << "N_s " << nliquidneighld(ldclass, ldcnums, q6data.lneigh);
+	  // number of liquid like particles with at least one neighbour in
+	  // LD cluster.  Note that we could pass either q6data.lneigh or
+	  // q4data.lneigh, since these are identical
+	  cout << "N_sLD " << ldliquid1nums.size() << endl;
 
-	  // // same as above but for TF cluster
-	  // cout << "N_s " << nliquidneightf(tfclass, tfcnums, q6data.lneigh);	  
+	  // same as above but for TF cluster
+	  cout << "N_sTF " << tfliquid1nums.size() << endl;
 
 	  // // total number of connections for all liquid-like particles with
 	  // // at least one neighbour in cluster for LD cluster
@@ -133,17 +146,17 @@ int main(int argc, char* argv[])
 
 	  // average q6 of liquid-like particles with at least one neighbour
 	  // in cluster for LD cluster
+	  cout << "Q6N_sLD " << qavgroup(q6data, ldliquid1nums) << endl;	  	  
 
 	  // same as above but for TF cluster
+	  cout << "Q6N_sTF " << qavgroup(q6data, tfliquid1nums) << endl;	  	  	  
 
 	  // average q4 of liquid-like particles with at least one neighbour
 	  // in cluster for LD cluster
+	  cout << "Q4N_sLD " << qavgroup(q4data, ldliquid1nums) << endl;	  	  	  
 
 	  // same as above but for LD cluster
-
-	  // potential energy (per particle) for LD cluster
-
-	  // potential energy (per particle) for TF cluster
+	  cout << "Q4N_sTF " << qavgroup(q4data, tfliquid1nums) << endl;	  	  	  	  
 
 	  // largest eigenvalue of gyration tensor for LD cluster
 
@@ -180,9 +193,6 @@ int main(int argc, char* argv[])
 	  // (that is, no mention of a cluster of any kind!).
 	  // Note that we exclude surface particles from the calculations.
 	  //////////////////////////////////////////////////////////////////
-
-	  // indexes of all particles (minus surface particles)
-	  vector<int> pindices = range(psystem.nsurf, psystem.allpars.size());
 	  
 	  // fraction of bcc particles in entire system
 	  cout << "s_bcc " << parfrac(ldclass, pindices, BCC) << endl;
@@ -195,13 +205,10 @@ int main(int argc, char* argv[])
 
 	  // fraction of icosahedral particles in entire system
 	  cout << "s_icos " << parfrac(ldclass, pindices, ICOS) << endl;
-	  
-	  // potential energy per (moving) particle of entire system
 
 	  // Average q6 of all particles in system
 	  cout << "Q6 " << qavgroup(q6data, pindices) << endl;
 
 	  // average q4 of all particles in system
 	  cout << "Q4 " << qavgroup(q4data, pindices) << endl;	  
-	  
 }

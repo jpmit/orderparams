@@ -27,10 +27,11 @@ public:
 			 replicate(const std::vector<Particle>&, const Box&);
 	  friend std::vector<Particle> xtalposnoperiodic(const std::vector<Particle>&,
 																	 const Box&);
-private:
+	  // these need to be public at the moment (see gyration.cpp)
 	  double lboxx;
 	  double lboxy;
-	  double lboxz;
+	  double lboxz;	  
+private:
 	  double nsep;
 	  double nsepsq;
 	  bool periodicz;
