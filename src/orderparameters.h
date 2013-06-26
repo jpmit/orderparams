@@ -3,9 +3,11 @@
 
 #include <iostream>
 #include "constants.h"
+#include "qdata.h"
 
 int csizeld(const std::vector<int>&);
 int csizetf(const std::vector<int>&);
+double qavgroup(const QData&, const std::vector<int>&);
 
 template <class etype>
 double parfrac(const std::vector<etype>& pclass, const std::vector<int>& cnums,

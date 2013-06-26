@@ -102,19 +102,19 @@ int main(int argc, char* argv[])
 	  cout << "n_icosLD " << parfrac(ldclass, ldcnums, ICOS) << endl;
 	  
 	  // // fraction of icos pars in TF cluster	  
-	  cout << "n_icosTF " << parfrac(ldclass, tfcnums, ICOS) << endl;;
+	  cout << "n_icosTF " << parfrac(ldclass, tfcnums, ICOS) << endl;
 	 
-	  // // average Q6 of LD cluster
-	  // cout << "Q6clus " << qavgroup(q6data, ldcnums, 6);
+	  // average Q6 of LD cluster
+	  cout << "Q6clusLD " << qavgroup(q6data, ldcnums) << endl;
 
-	  // // average Q6 of TF cluster
-	  // cout << "Q6clus " << qavgroup(q6data, tfcnums, 6);
+	  // average Q6 of TF cluster
+	  cout << "Q6clusTF " << qavgroup(q6data, tfcnums) << endl;
 	  	 
-	  // // average Q4 of LD cluster
-	  // cout << "Q4clus " << qavgroup(q4data, ldcnums, 4);
+	  // average Q4 of LD cluster
+	  cout << "Q4clusLD " << qavgroup(q4data, ldcnums) << endl;
 
-	  // // average Q4 of TF cluster
-	  // cout << "Q4clus " << qavgroup(q4data, tfcnums, 4);
+	  // average Q4 of TF cluster
+	  cout << "Q4clusTF " << qavgroup(q4data, tfcnums) << endl;
 
 	  // // number of liquid like particles with at least one neighbour in
 	  // // LD cluster.  Note that we could pass either q6data.lneigh or
@@ -178,24 +178,30 @@ int main(int argc, char* argv[])
      //////////////////////////////////////////////////////////////////
 	  // These order parameter are 'global' i.e. for the entire system
 	  // (that is, no mention of a cluster of any kind!).
+	  // Note that we exclude surface particles from the calculations.
 	  //////////////////////////////////////////////////////////////////
 
+	  // indexes of all particles (minus surface particles)
+	  vector<int> pindices = range(psystem.nsurf, psystem.allpars.size());
+	  
 	  // fraction of bcc particles in entire system
-	  cout << "s_bcc " << parfrac(ldclass, range(0,psystem.allpars.size()), BCC) << endl;
+	  cout << "s_bcc " << parfrac(ldclass, pindices, BCC) << endl;
 	  
 	  // fraction of fcc particles in entire system
-	  cout << "s_fcc " << parfrac(ldclass, range(0,psystem.allpars.size()), FCC) << endl;
+	  cout << "s_fcc " << parfrac(ldclass, pindices, FCC) << endl;
 	  
 	  // fraction of hcp particles in entire system
-	  cout << "s_hcp " << parfrac(ldclass, range(0,psystem.allpars.size()), HCP) << endl;
+	  cout << "s_hcp " << parfrac(ldclass, pindices, HCP) << endl;
 
 	  // fraction of icosahedral particles in entire system
-	  cout << "s_icos " << parfrac(ldclass, range(0,psystem.allpars.size()), ICOS) << endl;
+	  cout << "s_icos " << parfrac(ldclass, pindices, ICOS) << endl;
 	  
 	  // potential energy per (moving) particle of entire system
 
-	  // average q6 of all particles in system
+	  // Average q6 of all particles in system
+	  cout << "Q6 " << qavgroup(q6data, pindices) << endl;
 
 	  // average q4 of all particles in system
+	  cout << "Q4 " << qavgroup(q4data, pindices) << endl;	  
 	  
 }
