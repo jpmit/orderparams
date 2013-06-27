@@ -5,14 +5,36 @@
 #include "box.h"
 #include "conncomponents.h"
 #include "utility.h"
-#include "readwrite.h"
+#include "diagonalize.h"
+#include "gtensor.h"
 
-/* gyration.cpp - functions to compute the gyration tensor.
-	Be warned, periodic boundary conditions need to be removed before computing.
-	Here this is achieved via the function replicate.
-*/
+// gtensor.cpp - functions to compute the gyration tensor.
+//	Be warned, periodic boundary conditions need to be removed before
+//	computing this. Here this is achieved via the function replicate.
 
 using std::vector;
+
+GTensor::GTensor(const ParticleSystem& psystem, const vector<int>& cnums)
+{
+	  // The gyration tensor itself
+	  gtensor.resize(boost::extents[3][3]);
+	  gtensor = getgytensor(psystem, cnums);
+
+	  // Diagonalise complete tensor
+	  double fullg[] = {gtensor[0][0], gtensor[0][1], gtensor[0][2],
+							  gtensor[1][0], gtensor[1][1], gtensor[1][2],
+							  gtensor[2][0], gtensor[2][1], gtensor[2][2]};
+	  double fullres[9];
+	  // After this call, fulleig stores the 3 eigenvalues
+	  diagonalize(fullg, 3, fullres, fulleig);
+
+	  // Diagonalise 2*2 tensor (x-y)
+	  double g[] = {gtensor[0][0], gtensor[0][1],
+						 gtensor[1][0], gtensor[1][1]};
+	  double res[4];
+	  // After this call, topeig stores the 2 eigenvalues of top part
+	  diagonalize(g, 2, res, topeig);
+}	  
 
 // Take positions of particles in largest cluster.  
 //	Return particles in the largest cluster, but without periodic BCS.
@@ -152,8 +174,11 @@ tensor getgytensor(const ParticleSystem& psystem, const vector<int>& cnums)
 	  }
 
 	  // take away periodic bcs
-	  vector<Particle> cparsnop = posnoperiodic(clusterpars, psystem.simbox);  
-	  writexyz(cparsnop, "testrep.xyz");
+	  vector<Particle> cparsnop = posnoperiodic(clusterpars, psystem.simbox);
+
+	  // cparsnop now stores the positions (periodic boundary conditions
+	  // removed) of the particles in the largest cluster
+	  // writexyz(cparsnop, "testrep.xyz");
 
 	  return gytensor(cparsnop);
 }

@@ -102,6 +102,15 @@ QData::QData(const ParticleSystem& psystem, const int _lval) :
 	  // lechner dellago eq 5
 	  qlbar = qls(qlmb);
 	  wlbar = wls(qlmb);
+
+	  // compute number of crystalline 'links'
+	  // first get normalised vectors qlm (-l <= m <= l) for computing
+	  // dot product Sij
+	  array2d qlmt = qlmtildes(qlm, numneigh, lval);
+
+	  // do dot products Sij to get number of links
+	  numlinks = getnlinks(qlmt, numneigh, lneigh, psystem.nsurf,
+								  psystem.nlinks, psystem.linval, lval);
 }
 
 // Classify particles as either Liquid-like or crystalline according
@@ -113,14 +122,8 @@ vector<TFCLASS> classifyparticlestf(const ParticleSystem& psystem,
 	  int npar = q6data.ql.size();
 	  vector<TFCLASS> parclass(npar, LIQ);
 
-	  // normalised vectors for computing dot product Sij
-	  array2d qlmt = qlmtildes(q6data.qlm, q6data.numneigh,
-										q6data.lval);
-
-	  // compute dot products, work out which particles are xtal
-	  vector<int> xps = xtalpars(qlmt, q6data.numneigh, q6data.lneigh,
-										  psystem.nsurf, psystem.nlinks,
-										  psystem.linval, q6data.lval);
+	  // from nlinks, work out which particles are xtal
+	  vector<int> xps = xtalpars(q6data.numlinks, psystem.nlinks);
 	  
 	  for (vector<LDCLASS>::size_type i = 0; i != psystem.nsurf; ++i) {
 			 parclass[i] = SURF;
@@ -223,64 +226,3 @@ vector<int> largestclustertf(const ParticleSystem& psystem,
 	  reindex(cnums, xps);
 	  return cnums;	  
 }
-
-/*
-	  // store global q and q of the cluster in object 
-	  qcluster = Qpars(qlm, cnums, lval);
-	  vector<int> pnums = range(nsurf, allpars.size());
-	  qglobal = Qpars(qlm, pnums, lval);
-*/
-
-/* Number of particles in largest cluster. */
-/*
-int QData::getNCluster()
-{
-	  return cnums.size();
-}
-*/
-/* Q value of largest cluster. */
- /* 
-double QData::getQCluster()
-{
-	  return qcluster;
-}
-*/
-/* Global Q value i.e. for whole system. */
-  /*
-double QData::getQGlobal()
-{
-	  return qglobal;
-}
- */
-/* 'Shape' of largest cluster. */
-	/*
-double QData::getClusterShape()
-{
-	  // get radius of gyration tensor of largest cluster.
-	  vector<Particle> cpars;
-	  int ncl = cnums.size();
-	  cpars.resize(ncl);
-	  for (vector<Particle>::size_type i = 0;
-			 i != ncl; ++i) {
-			 cpars[i] = allpars[cnums[i]];
-	  }
-	  cpars = xtalposnoperiodic(cpars, simbox);
-	  tensor gyt = gytensor(cpars);
-
-	  // diagonalise (x-y) part of tensor
-	  double g[] = {gyt[0][0], gyt[0][1],
-						 gyt[1][0], gyt[1][1]};
-	  double res[4];
-	  double eig[2];
-	  diagonalize(g, 2, res, eig);
-
-
-	  for (int j = 0; j != 3; ++j) {
-			 std::cout << gyt[j][0] << " " << gyt[j][1] << " "
-						  << gyt[j][2] << std::endl;
-	  }
-
-	  
-	  return eig[0]*eig[0] + eig[1]*eig[1];
-}
-*/

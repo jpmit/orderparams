@@ -6,7 +6,7 @@
 using std::cout;
 using std::endl;
 
-/* Diagonalize symmetric matrix, which is represented as an array. */
+// Diagonalize symmetric matrix, which is represented as an array.
 
 void diagonalize(double* data, const int dim, double* res, double* eig)
 {
@@ -34,7 +34,7 @@ void diagonalize(double* data, const int dim, double* res, double* eig)
 	  gsl_matrix_free (evec);
 }
 
-/* Print eigenvalue information. */
+// Print eigenvalue information.
 
 void printeig(const double* res, const double* eig, const int dim)
 {

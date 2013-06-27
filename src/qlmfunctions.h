@@ -5,25 +5,21 @@
 #include <complex>
 #include "particle.h"
 #include "box.h"
-#include "boost/multi_array.hpp"
+#include "typedefs.h"
 
-boost::multi_array<std::complex<double>,2 > qlmtildes(const boost::multi_array<std::complex<double>,2>&,
-																		const std::vector<int>&, const int);
-boost::multi_array<std::complex<double>,2 > qlmbars(const boost::multi_array<std::complex<double>,2>&,
-																	 const std::vector<std::vector<int> >&, const int);
-boost::multi_array<std::complex<double>,2 > qlms(const std::vector<Particle>&,
-															 const Box& simbox,
-															 std::vector<int>& numneigh,
-															 std::vector<std::vector<int> >&,
-															 const int);
-std::vector<int> xtalpars(const boost::multi_array<std::complex<double>,2 >&,
-								  const std::vector<int>&,
-								  const std::vector<std::vector<int> >&,
-								  const int, const int,
-								  const double, const int);
-double Qpars(const boost::multi_array<std::complex<double>,2 >&,
-				 const std::vector<int>&, const int);
-std::vector<double> qls(const boost::multi_array<std::complex<double>,2 >&);
-std::vector<double> wls(const boost::multi_array<std::complex<double>,2 >&);
+std::vector<int> xtalpars(const std::vector<int>&, const int);
+std::vector<int> getnlinks(const array2d&, const std::vector<int>&,
+									const std::vector<std::vector<int> >&,
+									const int, const int, const double,
+									const int);
+array2d qlmtildes(const array2d&, const std::vector<int>&, const int);
+array2d qlmbars(const array2d&, const std::vector<std::vector<int> >&,
+					 const int);
+array2d qlms(const std::vector<Particle>&, const Box&, std::vector<int>&,
+				 std::vector<std::vector<int> >&, const int);
+
+double Qpars(const array2d&, const std::vector<int>&, const int);
+std::vector<double> qls(const array2d&);
+std::vector<double> wls(const array2d&);
 
 #endif

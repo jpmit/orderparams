@@ -6,8 +6,8 @@ CXXFLAGS = -Wno-deprecated -g
 LDFLAGS = 
 LDLIBS = -l gsl -l blas
 OBJS = $(addprefix $(OBJDIR)/, main.o conncomponents.o \
-         opfunctions.o readwrite.o qlmfunctions.o gyration.o diagonalize.o \
-         qdata.o particlesystem.o orderparameters.o)
+         opfunctions.o readwrite.o qlmfunctions.o gtensor.o diagonalize.o \
+         qdata.o particlesystem.o orderparameters.o utility.o)
 
 all: orderparams
 
@@ -25,7 +25,9 @@ readwrite.o : readwrite.cpp particle.h
 qlmfunctions.o : qlmfunctions.cpp constants.h particle.h box.h opfunctions.h \
                  constants.h
 
-gyration.o : gyration.cpp particle.h box.h conncomponents.h utilityfunctions.h
+gtensor.o : gtensor.cpp particlesystem.h particle.h box.h \
+            conncomponents.h utility.h readwrite.h diagonalize.h \
+            gtensor.h
 
 diagonalize.o : diagonalize.cpp
 
@@ -35,6 +37,8 @@ qdata.o : qdata.cpp qdata.h box.h particle.h qlmfunctions.h constants.h \
 particlesystem.o : particlesystem.cpp particlesystem.h readwrite.h box.h
 
 orderparameters.o : orderparameters.cpp
+
+utility.o : utility.cpp
 
 clean:
 	rm -f $(OBJDIR)/*.o

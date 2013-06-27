@@ -12,19 +12,36 @@ using std::vector;
 
 typedef boost::multi_array<complex<double>,2> array2d;
 
-// xtalpars:
-// Return a vector whose elements are indexes of particles
-// (indexes into qlm) idenfified as crystalline by the number of
-// 'links' between the particle
-// and its neighbours.
+// Return vector of indices of particles identified as crystalline
+// by the number of 'links' between the particle and its neighbours.
+// Note this is the 'Ten-Wolde Frenkel' approach to definining
+// crystallinity.
 
-vector<int> xtalpars(const array2d& qlmt, const vector<int>& numneigh,
-							const vector<vector<int> >& lneigh, const int nsurf,
-							const int nlinks, const double linkval,
-							const int lval)
+vector<int> xtalpars(const vector<int>& linknums, const int nlinks)
 {
-	  vector<int> xtals;
+	  vector<int> xtalpars;
+
+	  for (vector<int>::size_type i = 0; i != linknums.size(); ++i) {
+			 if (linknums[i] >= nlinks) {
+					// if particle has >=nlinks crystal links, it is in a
+					// crystal environment	  					
+					xtalpars.push_back(i);
+			 }
+	  }
+
+	  return xtalpars;
+}
+
+// Return a vector whose elements are number of 'links' for each
+// particle in  qlm matrix.
+
+vector<int> getnlinks(const array2d& qlmt, const vector<int>& numneigh,
+							 const vector<vector<int> >& lneigh, const int nsurf,
+							 const int nlinks, const double linkval,
+							 const int lval)
+{
 	  array2d::index npar = qlmt.shape()[0];
+	  vector<int> numlinks(npar, 0);
 	  int nlin,k;
 	  double linval;
 
@@ -33,28 +50,24 @@ vector<int> xtalpars(const array2d& qlmt, const vector<int>& numneigh,
 	  // (linkval), we call this a crystal link
 
 	  for (array2d::index i = nsurf; i != npar; ++i) {
-			 // only interested in particle if it has at least nlinks
-			 // neighbours
-			 if (numneigh[i] >= nlinks) {
-					nlin = 0;
-					for (int j = 0; j != numneigh[i]; ++j) {
-						  k = lneigh[i][j];
-						  linval = 0.0;
-						  for (int m = 0; m != 2*lval + 1; ++m)
-								 // dot product (sometimes denoted Sij)
-								 linval += qlmt[i][m].real()*qlmt[k][m].real() +
-										     qlmt[i][m].imag()*qlmt[k][m].imag();
-						  if (linval >= linkval)
-								 nlin = nlin + 1;
-					}
-					// if particle has >=nlinks crystal links, it is in a
-					// crystal environment
-					if (nlin >= nlinks) {
-						  xtals.push_back(i);
+			 nlin = 0;
+			 // go through each neighbour in turn
+			 for (int j = 0; j != numneigh[i]; ++j) {
+					k = lneigh[i][j];
+					linval = 0.0;
+					for (int m = 0; m != 2*lval + 1; ++m)
+						  // dot product (sometimes denoted Sij)
+						  linval += qlmt[i][m].real()*qlmt[k][m].real() +
+								 qlmt[i][m].imag()*qlmt[k][m].imag();
+					if (linval >= linkval) {
+						  nlin = nlin + 1;
 					}
 			 }
+			 // store number of links for this particle
+			 numlinks[i] = nlin;			 					
 	  }
-	  return xtals;
+
+	  return numlinks;
 }
 
 // averageqlm:
@@ -226,7 +239,6 @@ vector<double> wls(const array2d& qlm)
 	  return wl;	  
 }
 
-// qlmtildes:
 // Convert matrix of qlm(i) to matrix of \tilde{qlm}(i)
 // \tilde{qlm}(i) is simply a normalised version of vector qlm(i)
 
@@ -254,7 +266,6 @@ array2d qlmtildes(const array2d& qlm, const vector<int>& numneigh,
 	  return qlmt;
 }
 
-// qlmbars:
 // Return matrix of qlmbar(i), qlm for each particle averaged over
 // all nearest neighbours.  The matrix has dimensions [i,(2l + 1)]
 // See Lechner and Dellago JCP 129, 114707 Equation (6)
@@ -283,7 +294,6 @@ array2d qlmbars(const array2d& qlm, const vector<vector<int> >& lneigh,
 	  return qlmbar;
 }
 
-// qlms:
 // Return matrix of qlm(i).  The matrix has dimensions [i,(2l + 1)]
 
 array2d qlms(const vector<Particle>& particles, const Box& simbox,

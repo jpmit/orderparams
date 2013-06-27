@@ -4,14 +4,19 @@
 #include <iostream>
 #include "constants.h"
 #include "qdata.h"
+#include "gtensor.h"
 
 int csizeld(const std::vector<int>&);
 int csizetf(const std::vector<int>&);
 double qavgroup(const QData&, const std::vector<int>&);
-int nliquid1neighld(const vector<LDCLASS>&, const vector<int>&,
-						  const vector<vector<int> >&);
-int nliquid1neightf(const vector<TFCLASS>&, const vector<int>&,
-						  const vector<vector<int> >&);
+double eiglarge(const GTensor&);
+double eigmid(const GTensor&);
+double eigsmall(const GTensor&);
+double rogsquared(const GTensor&);
+double element33(const GTensor&);
+double eiglargetop(const GTensor&);
+double eigsmalltop(const GTensor&);
+int numconnections(const QData&, const std::vector<int>&);
 
 // template for finding fraction of a particular type of particle in
 // a list of particles. Used for n_fcc etc.

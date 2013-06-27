@@ -7,7 +7,7 @@
 #include "qdata.h"
 #include "constants.h"
 #include "utility.h"
-#include "gyration.h"
+#include "gtensor.h"
 
 using std::cout;
 using std::endl;
@@ -74,7 +74,8 @@ int main(int argc, char* argv[])
 	  vector<int> pindices = range(psystem.nsurf, psystem.allpars.size());
 
 	  // radius of gyration tensor for both clusters
-	  tensor tfgtensor = getgytensor(psystem, tfcnums);
+	  GTensor tfgtensor(psystem, tfcnums);
+	  GTensor ldgtensor(psystem, ldcnums);
 
 	  // compute each order parameter in turn and print to stdout.
 	  // See orderparams.cpp for these functions.
@@ -137,56 +138,74 @@ int main(int argc, char* argv[])
 	  // same as above but for TF cluster
 	  cout << "N_sTF " << tfliquid1nums.size() << endl;
 
-	  // // total number of connections for all liquid-like particles with
-	  // // at least one neighbour in cluster for LD cluster
-	  // cout << "N_l " << nconnectionsliqld(ldcnums, q6data, ldclass);
+	  // total number of connections for all liquid-like particles with
+	  // at least one neighbour in cluster for LD cluster
+	  cout << "N_lLD " << numconnections(q6data, ldliquid1nums) << endl;
 
 	  // // same as above but for TF cluster
-	  // cout << "N_l " << nconnectionsliqtf(tfcnums, q6data, tfclass);
+	  cout << "N_lTF " << numconnections(q6data, tfliquid1nums) << endl;
 
 	  // average q6 of liquid-like particles with at least one neighbour
 	  // in cluster for LD cluster
 	  cout << "Q6N_sLD " << qavgroup(q6data, ldliquid1nums) << endl;	  	  
 
 	  // same as above but for TF cluster
-	  cout << "Q6N_sTF " << qavgroup(q6data, tfliquid1nums) << endl;	  	  	  
+	  cout << "Q6N_sTF " << qavgroup(q6data, tfliquid1nums) << endl;
 
 	  // average q4 of liquid-like particles with at least one neighbour
 	  // in cluster for LD cluster
-	  cout << "Q4N_sLD " << qavgroup(q4data, ldliquid1nums) << endl;	  	  	  
+	  cout << "Q4N_sLD " << qavgroup(q4data, ldliquid1nums) << endl;
 
 	  // same as above but for LD cluster
-	  cout << "Q4N_sTF " << qavgroup(q4data, tfliquid1nums) << endl;	  	  	  	  
-
-	  // largest eigenvalue of gyration tensor for LD cluster
-
-	  // largest eigenvalue of gyration tensor for TF cluster
-
-	  // middle eigenvalue of gyration tensor for LD cluster
-
-	  // middle eigenvalue of gyration tensor for TF cluster
+	  cout << "Q4N_sTF " << qavgroup(q4data, tfliquid1nums) << endl;
 
 	  // smallest eigenvalue of gyration tensor for LD cluster
+	  cout << "Rbar_g,1LD " << eigsmall(ldgtensor) << endl;	  
 
 	  // smallest eigenvalue of gyration tensor for TF cluster
+	  cout << "Rbar_g,1LD " << eigsmall(tfgtensor) << endl;
 
+	  // middle eigenvalue of gyration tensor for LD cluster
+	  cout << "Rbar_g,2LD " << eigmid(ldgtensor) << endl;
+
+	  // middle eigenvalue of gyration tensor for TF cluster
+	  cout << "Rbar_g,2TF " << eigmid(tfgtensor) << endl;
+
+	  // largest eigenvalue of gyration tensor for LD cluster
+	  cout << "Rbar_g,3LD " << eiglarge(ldgtensor) << endl;
+	  
+	  // largest eigenvalue of gyration tensor for TF cluster
+	  cout << "Rbar_g,3TF " << eiglarge(tfgtensor) << endl;
+
+	  // square of 'radius of gyration' for LD cluster
+	  cout << "Rbar_gLD " << rogsquared(ldgtensor) << endl;
+
+	  // square of 'radius of gyration' for TF cluster
+	  cout << "Rbar_gTF " << rogsquared(tfgtensor) << endl;	  
+	  
 	  // (3,3) element of non-diagonalized gyration tensor for LD
 	  // cluster
-
+	  cout << "R_g,zLD " << element33(ldgtensor) << endl;
+	  
 	  // (3,3) element of non-diagonalized gyration tensor for TF
 	  // cluster
-
-	  // largest eigenvalue of top-diagonalised gyration tensor for LD
-	  // cluster
-
-	  // largest eigenvalue of top-diagonalised gyration tensor for TF
-	  // cluster
+	  cout << "R_g,zTF " << element33(tfgtensor) << endl;
 
 	  // smallest eigenvalue of top-diagonalised gyration tensor for LD
 	  // cluster
+	  cout << "R_g,1LD " << eigsmalltop(ldgtensor) << endl;	  
 
 	  // smallest eigenvalue of top-diagonalised gyration tensor for TF
 	  // cluster
+	  cout << "R_g,1TF " << eigsmalltop(tfgtensor) << endl;	  
+
+	  // largest eigenvalue of top-diagonalised gyration tensor for LD
+	  // cluster
+	  cout << "R_g,2LD " << eiglargetop(ldgtensor) << endl;
+
+	  // largest eigenvalue of top-diagonalised gyration tensor for TF
+	  // cluster
+	  cout << "R_g,2TF " << eiglargetop(tfgtensor) << endl;	  
 
      //////////////////////////////////////////////////////////////////
 	  // These order parameter are 'global' i.e. for the entire system

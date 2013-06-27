@@ -34,6 +34,10 @@ public:
 	  std::vector<double> qlbar;
 	  std::vector<double> wl;
 	  std::vector<double> wlbar;
+
+	  // the number of crystalline 'links' that each particle has
+	  // warning: this only really makes sense for the case l = 6
+	  vector<int> numlinks;
 };
 
 std::vector<TFCLASS> classifyparticlestf(const ParticleSystem&,
