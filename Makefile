@@ -2,7 +2,7 @@
 SRCDIR = src
 OBJDIR = src
 CXX = g++
-CXXFLAGS = -Wall #-g #-Wno-deprecated
+CXXFLAGS = -O3
 LDFLAGS = 
 LDLIBS = -l gsl -l blas
 OBJS = $(addprefix $(OBJDIR)/, main.o conncomponents.o \
