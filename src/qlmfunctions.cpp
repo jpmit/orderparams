@@ -12,8 +12,8 @@ using std::vector;
 
 typedef boost::multi_array<complex<double>,2> array2d;
 
-// Return vector of indices of particles identified as crystalline
-// by the number of 'links' between the particle and its neighbours.
+// Return vector of indices of particles identified as crystalline by
+// the number of 'links' between the particle and its neighbours.
 // Note this is the 'Ten-Wolde Frenkel' approach to definining
 // crystallinity.
 
@@ -24,7 +24,7 @@ vector<int> xtalpars(const vector<int>& linknums, const int nlinks)
 	  for (vector<int>::size_type i = 0; i != linknums.size(); ++i) {
 			 if (linknums[i] >= nlinks) {
 					// if particle has >=nlinks crystal links, it is in a
-					// crystal environment	  					
+					// crystal environment
 					xtalpars.push_back(i);
 			 }
 	  }
@@ -33,7 +33,7 @@ vector<int> xtalpars(const vector<int>& linknums, const int nlinks)
 }
 
 // Return a vector whose elements are number of 'links' for each
-// particle in  qlm matrix.
+// particle in qlm matrix.
 
 vector<int> getnlinks(const array2d& qlmt, const vector<int>& numneigh,
 							 const vector<vector<int> >& lneigh, const int nsurf,
@@ -70,9 +70,8 @@ vector<int> getnlinks(const array2d& qlmt, const vector<int>& numneigh,
 	  return numlinks;
 }
 
-// averageqlm:
-// average values in vector qlm
-// This could in principle be made a template function!
+// average values in vector qlm.  This could in principle be made a
+// template function!
 
 vector<complex<double> > averageqlm(const array2d& qlm,
 												const vector<int>& pnums,
@@ -94,14 +93,13 @@ vector<complex<double> > averageqlm(const array2d& qlm,
 	  return qlmaverage;
 }
 
-// Qpars:
-// Get Q of all particles in pnums, which gives indexes into qlm
-//	This can be used to get Q global, or Q cluster, depending on pnums.
+// Get Q of all particles in pnums, which gives indexes into qlm. This
+//	can be used to get Q global, or Q cluster, depending on pnums.
 
-double Qpars(const array2d& qlm, // qlm(i) for every particle i
+double Qpars(const array2d& qlm,       // qlm(i) for every particle i
 				 const vector<int>& pnums, // particle indices of interest
-				 const int lval) // spherical harmonic number
-                             // (usually 4 or 6)
+				 const int lval)           // spherical harmonic number
+                                       // (usually 4 or 6)
 {
 	  // get a vector which contains qlm averaged over all particles
 	  // with indexes in pnums i.e.
@@ -119,15 +117,14 @@ double Qpars(const array2d& qlm, // qlm(i) for every particle i
 	  return qvalue;
 }
 
-// Wpars:
-// Get W of all particles in pnums, which gives indexes into qlm
-//	This can be used to get W global, or W cluster, or the w(i)'s
-// (i.e. W for each particle), depending on pnums.
+// Get W of all particles in pnums, which gives indexes into qlm This
+//	can be used to get W global, or W cluster, or the w(i)'s (i.e. W
+//	for each particle), depending on pnums.
 
-double Wpars(const array2d& qlm, // qlm(i) for all particles i
+double Wpars(const array2d& qlm,       // qlm(i) for all particles i
 				 const vector<int>& pnums, // particle indices
-				 const int lval) // spherical harmonic number
-                             // (usually 4 or 6)
+				 const int lval)           // spherical harmonic number
+                                       // (usually 4 or 6)
 {
 	  // get a vector which contains qlm averaged over all particles
 	  // with indexes in pnums i.e.
@@ -135,9 +132,9 @@ double Wpars(const array2d& qlm, // qlm(i) for all particles i
 	  vector<complex<double> > qlma = averageqlm(qlm, pnums, lval);
 	  
 	  complex<double> wval = 0.0;
-	  // cycle through the wigner symbols in the order
-	  // they appear in constants.h, remembering to multiply
-	  // by the correct number of identical permutations
+	  // cycle through the wigner symbols in the order they appear in
+	  // constants.h, remembering to multiply by the correct number of
+	  // identical permutations
 	  if (lval == 6) {
 			 // cycle through all distinct permutations
 			 // (16 in total for lval = 6)
@@ -183,13 +180,11 @@ double Wpars(const array2d& qlm, // qlm(i) for all particles i
 	  return real(wval);
 }
 
-// ql:
-// Get ql(i) for every particle i in qlm
-// See Lechner Dellago JCP 129 114707 (2008) equation (3)
-// Note that this function can be used to compute both ql(i)
-// which is LD equation (3) and \bar{ql(i)}, which is LD equation (5).
-// In the latter case we just need to pass a matrix
-// of \bar{qlm} rather than qlm.
+// Get ql(i) for every particle i in qlm See Lechner Dellago JCP 129
+// 114707 (2008) equation (3) Note that this function can be used to
+// compute both ql(i) which is LD equation (3) and \bar{ql(i)}, which
+// is LD equation (5).  In the latter case we just need to pass a
+// matrix of \bar{qlm} rather than qlm.
 
 vector<double> qls(const array2d& qlm)
 {
@@ -201,23 +196,22 @@ vector<double> qls(const array2d& qlm)
 
 	  for (array2d::index i = 0; i != npar; ++i)
 	  {
-			 // this is a bit inefficient, since we make a lot of function
-			 // calls and multiplications.  But is saves code replication
-			 // and in any case this function should only need to be
-			 // called once for any particular particle configuration
+			 // this is a bit inefficient, since we make a lot of
+			 // function calls and multiplications.  But is saves code
+			 // replication and in any case this function should only
+			 // need to be called once for any particular particle
+			 // configuration.
 			 par[0] = i;
 			 ql[i] = Qpars(qlm, par, lval);
 	  }
 	  return ql;
 }
 
-// wl:
-// Get wl(i) for all particles
-// See Lechner Dellago JCP 129 114707 (2008) equation (4)
-// Note that this function can be used to compute both wl(i)
-// which is LD equation (4) and \bar{wl(i)}, which is LD equation (7).
-// In the latter case we just need to pass a matrix
-// of \bar{qlm} rather than qlm.
+// Get wl(i) for all particles. See Lechner Dellago JCP 129 114707
+// (2008) equation (4). Note that this function can be used to compute
+// both wl(i) which is LD equation (4) and \bar{wl(i)}, which is LD
+// equation (7).  In the latter case we just need to pass a matrix of
+// \bar{qlm} rather than qlm.
 
 vector<double> wls(const array2d& qlm)
 {
@@ -229,18 +223,19 @@ vector<double> wls(const array2d& qlm)
 
 	  for (array2d::index i = 0; i != npar; ++i)
 	  {
-			 // this is a bit inefficient, since we make a lot of function
-			 // calls and multiplications.  But is saves code replication
-			 // and in any case this function should only need to be
-			 // called once for any particular particle configuration
+			 // this is a bit inefficient, since we make a lot of
+			 // function calls and multiplications.  But is saves code
+			 // replication and in any case this function should only
+			 // need to be called once for any particular particle
+			 // configuration
 			 par[0] = i;
 			 wl[i] = Wpars(qlm, par, lval);
 	  }
 	  return wl;	  
 }
 
-// Convert matrix of qlm(i) to matrix of \tilde{qlm}(i)
-// \tilde{qlm}(i) is simply a normalised version of vector qlm(i)
+// Convert matrix of qlm(i) to matrix of \tilde{qlm}(i) \tilde{qlm}(i)
+// is simply a normalised version of vector qlm(i)
 
 array2d qlmtildes(const array2d& qlm, const vector<int>& numneigh,
 						const int lval)
@@ -266,13 +261,12 @@ array2d qlmtildes(const array2d& qlm, const vector<int>& numneigh,
 	  return qlmt;
 }
 
-// Return matrix of qlmbar(i), qlm for each particle averaged over
-// all nearest neighbours.  The matrix has dimensions [i,(2l + 1)]
-// See Lechner and Dellago JCP 129, 114707 Equation (6)
-// BUT (!) note there is an error in Lechner Dellago equation:
-// The denominator should be N_b + 1 rather than N_b.
-// This is corrected in:
-// Jungblut and Dellago JCP 134, 104501 (2011) Equation (5)
+// Return matrix of qlmbar(i), qlm for each particle averaged over all
+// nearest neighbours.  The matrix has dimensions [i,(2l + 1)]. See
+// Lechner and Dellago JCP 129, 114707 Equation (6) BUT (!) note there
+// is an error in Lechner Dellago equation: The denominator should be
+// N_b + 1 rather than N_b.  This is corrected in: Jungblut and
+// Dellago JCP 134, 104501 (2011) Equation (5)
 
 array2d qlmbars(const array2d& qlm, const vector<vector<int> >& lneigh,
 					 const int lval)

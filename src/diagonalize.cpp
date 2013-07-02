@@ -6,7 +6,9 @@
 using std::cout;
 using std::endl;
 
-// Diagonalize symmetric matrix, which is represented as an array.
+// Diagonalize real symmetric matrix, which is represented as an
+// array.  Note that here we are using gsl - GNU Scientific Library -
+// for diagonalisation.
 
 void diagonalize(double* data, const int dim, double* res, double* eig)
 {
@@ -22,11 +24,11 @@ void diagonalize(double* data, const int dim, double* res, double* eig)
 			 double eval_i = gsl_vector_get (eval, i);
 			 gsl_vector_view evec_i = gsl_matrix_column (evec, i);
 
-			 /* res stores eigenvectors as columns */
+			 // res stores eigenvectors as columns
 			 for (int j = 0; j < dim; ++j) {
 					res[i + dim*j] = gsl_vector_get(&evec_i.vector, j);
 			 }
-			 /* eig stores eigenvalues */
+			 // eig stores eigenvalues
 			 eig[i] = eval_i;
 	  }
 			      

@@ -15,7 +15,8 @@ using std::endl;
 
 // Create graph with crystal pars as nodes and vertices between neighbours.
 
-graph getxgraph(const vector<Particle>& particles, const vector<int>& xpars, const Box& simbox)
+graph getxgraph(const vector<Particle>& particles,
+					 const vector<int>& xpars, const Box& simbox)
 {
 	  graph G; // graph containing crystal particles as nodes
 	  vector<int>::size_type nxtal = xpars.size();
@@ -23,13 +24,15 @@ graph getxgraph(const vector<Particle>& particles, const vector<int>& xpars, con
 	  double sep;
 	  for (i = 0; i != nxtal; ++i)
 			 for (j = i + 1; j != nxtal; ++j)
-					if (simbox.isneigh(particles[xpars[i]],particles[xpars[j]], sep))
+					if (simbox.isneigh(particles[xpars[i]],
+											 particles[xpars[j]], sep))
 						  add_edge(i, j, G);
 
 	  return G;
 }
 
-// Return vector of ints containing nodes (particle nums) of largest connected component.
+// Return vector of ints containing nodes (particle nums) of largest
+// connected component.
 
 vector<int> largestcomponent(const graph& G)
 {
@@ -42,7 +45,8 @@ vector<int> largestcomponent(const graph& G)
 	  for (vector<int>::size_type i = 0; i != component.size(); ++i)
 			 ++ncomp[component[i]];
 
-	  int maxcomp = distance(ncomp.begin(),max_element(ncomp.begin(),ncomp.end()));
+	  int maxcomp = distance(ncomp.begin(),max_element(ncomp.begin(),
+																		ncomp.end()));
 	  
 	  vector<int> ret;
 	  for (vector<int>::size_type i = 0; i != component.size(); ++i) {

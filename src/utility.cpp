@@ -2,9 +2,7 @@
 
 using std::vector;
 
-// range:
-// return vector containing integers ordered in
-// range [start,end).
+// return vector containing integers ordered in range [start,end).
 
 vector<int> range(int start, int end)
 {
@@ -15,11 +13,10 @@ vector<int> range(int start, int end)
 	  return ret;
 }
 
-// reindex:
-// reindex vector in integers.  e.g. if indx1 = [0, 3, 5],
-// it becomes [indx2[0], indx2[3], indx2[5].
-//	This is used for getting the xtal particle indexes in absolute
-// terms, rather than them being indexes into a list of xtal particles
+// reindex vector in integers.  e.g. if indx1 = [0, 3, 5], it becomes
+// [indx2[0], indx2[3], indx2[5].  This is used for getting the xtal
+// particle indexes in absolute terms, rather than them being indexes
+// into a list of xtal particles
 
 inline void reindex(vector<int>& indx1, const vector<int>& indx2)
 {

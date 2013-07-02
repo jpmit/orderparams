@@ -12,6 +12,8 @@ using std::string;
 using std::cout;
 using std::endl;
 
+// Constructor for ParticleSystem object
+
 ParticleSystem::ParticleSystem(string pfile)
 {
 	  // read parameters from specified file

@@ -15,19 +15,19 @@ using std::vector;
 using std::complex;
 using std::norm;
 
-// QData stores qlm in its various forms for each particle in the system
-// Usually l=6 or 4 but the code will accept any value
+// QData stores qlm in its various forms for each particle in the
+// system. Usually l=6 or 4 but the code will accept any value.
 //
 // The first thing to do is to compute the 2l + 1 dimensional vector
 // qlm(i) (m = -l,..,0,..,l) for each particle i in the system.
+
 // This is defined as:
 // qlm(i) = 1/N_b(i) \sum_{j=1}^{N_b(i)} Ylm(r_ij)
 // Here N_b(i) is the number of neighbours belonging to particle i.
 // Two particles are considered neighbours if they are within some cut
-// off distance r_cut (This needs to be specified).
-// The sum is over all neighbouring particles.
-// The functions Ylm are the spherical harmonics, and r_ij is a vector
-// from particle i to particle j.
+// off distance r_cut (This needs to be specified).  The sum is over
+// all neighbouring particles.  The functions Ylm are the spherical
+// harmonics, and r_ij is a vector from particle i to particle j.
 //
 // We can use the information qlm(i) in a large number of ways:
 //
@@ -76,8 +76,8 @@ using std::norm;
 //      order parameter (which I call N_cl in my papers).
 //
 // vi)  Next,we can compute the average qlm(i)
-//
-//
+
+// Constructor for QData object
 
 QData::QData(const ParticleSystem& psystem, const int _lval) :
 	  lval(_lval)
@@ -195,9 +195,9 @@ vector<int> largestclusterld(const ParticleSystem& psystem,
 	  // largest cluster is the largest connected component of graph
 	  vector<int> cnums = largestcomponent(xgraph);
 
-	  // now largest component returns indexes into array xps,
-	  // we need to reindex so that it contains indices into
-	  // psystem.allpars (see utility.cpp)
+	  // now largest component returns indexes into array xps, we need
+	  // to reindex so that it contains indices into psystem.allpars
+	  // (see utility.cpp)
 	  reindex(cnums, xps);
 	  return cnums;
 }
@@ -220,9 +220,9 @@ vector<int> largestclustertf(const ParticleSystem& psystem,
 	  // largest cluster is the largest connected component of graph
 	  vector<int> cnums = largestcomponent(xgraph);
 
-	  // now largest component returns indexes into array xps,
-	  // we need to reindex so that it contains indices into
-	  // psystem.allpars (see utility.cpp)
+	  // now largest component returns indexes into array xps, we need
+	  // to reindex so that it contains indices into psystem.allpars
+	  // (see utility.cpp)
 	  reindex(cnums, xps);
 	  return cnums;	  
 }

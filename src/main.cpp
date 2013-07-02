@@ -13,10 +13,10 @@ using std::cout;
 using std::endl;
 using std::string;
 
-// Compute the values of all order parameters for a given configuration
-// Currently there are 45 different order parameters output, but a lot
-// of these are 'duplicated' because there are two different clusters
-// (see below).
+// Compute the values of all order parameters for a given
+// configuration Currently there are 45 different order parameters
+// output, but a lot of these are 'duplicated' because there are two
+// different clusters (see below).
 
 int main(int argc, char* argv[])
 {
@@ -42,24 +42,24 @@ int main(int argc, char* argv[])
 	  ParticleSystem psystem(pfile);
 
 	  // compute the qlm data
-	  // warning: at the moment the number of links, and the
-	  // threshold value for a link is the same for both l=4 and l=6
+	  // warning: at the moment the number of links, and the threshold
+	  // value for a link is the same for both l=4 and l=6
 	  // (psystem.linval and psystem.nlinks respectively)
 	  QData q6data(psystem, 6);
 	  QData q4data(psystem, 4);
 	  
-	  // from q6data and q4 data, classify each particle as bcc, hcp etc.
-	  // using Lechner Dellago approach.
+	  // from q6data and q4 data, classify each particle as bcc, hcp
+	  // etc.  using Lechner Dellago approach.
 	  vector<LDCLASS> ldclass = classifyparticlesld(psystem, q4data,
 																	q6data);
 
-	  // from q6 data only, classify each particle as either crystalline
-	  // or liquid, using TenWolde Frenkel approach
+	  // from q6 data only, classify each particle as either
+	  // crystalline or liquid, using TenWolde Frenkel approach
 	  vector<TFCLASS> tfclass = classifyparticlestf(psystem, q6data);
 
 	  // indices into particle vector (psystem.allpars) of those
-	  // particles in the ten-Wolde Frenkel largest cluster and
-	  // those in the Lechner Dellago cluster.
+	  // particles in the ten-Wolde Frenkel largest cluster and those
+	  // in the Lechner Dellago cluster.
 	  vector<int> tfcnums = largestclustertf(psystem, tfclass);
 	  vector<int> ldcnums = largestclusterld(psystem, ldclass);
 
@@ -82,10 +82,10 @@ int main(int argc, char* argv[])
 
 	  //////////////////////////////////////////////////////////////////
 	  // The following order parameters are associated in some way with
-	  // properties of the largest cluster.  There are two approaches to
-	  // determining this cluster, which I call Lecher Dellage (LD) and
-	  // ten-Wolde Frenkel (TF), and thus two different clusters.  All
-	  // of the OPs are computed for both clusters.
+	  // properties of the largest cluster.  There are two approaches
+	  // to determining this cluster, which I call Lecher Dellage (LD)
+	  // and ten-Wolde Frenkel (TF), and thus two different clusters.
+	  // All of the OPs are computed for both clusters.
 	  /////////////////////////////////////////////////////////////////
 	  
 	  // Size of cluster by LD method
@@ -145,15 +145,15 @@ int main(int argc, char* argv[])
 	  // // same as above but for TF cluster
 	  cout << "N_lTF " << numconnections(q6data, tfliquid1nums) << endl;
 
-	  // average q6 of liquid-like particles with at least one neighbour
-	  // in cluster for LD cluster
+	  // average q6 of liquid-like particles with at least one
+	  // neighbour in cluster for LD cluster
 	  cout << "Q6N_sLD " << qavgroup(q6data, ldliquid1nums) << endl;	  	  
 
 	  // same as above but for TF cluster
 	  cout << "Q6N_sTF " << qavgroup(q6data, tfliquid1nums) << endl;
 
-	  // average q4 of liquid-like particles with at least one neighbour
-	  // in cluster for LD cluster
+	  // average q4 of liquid-like particles with at least one
+	  // neighbour in cluster for LD cluster
 	  cout << "Q4N_sLD " << qavgroup(q4data, ldliquid1nums) << endl;
 
 	  // same as above but for LD cluster
@@ -209,8 +209,8 @@ int main(int argc, char* argv[])
 
      //////////////////////////////////////////////////////////////////
 	  // These order parameter are 'global' i.e. for the entire system
-	  // (that is, no mention of a cluster of any kind!).
-	  // Note that we exclude surface particles from the calculations.
+	  // (that is, no mention of a cluster of any kind!).  Note that we
+	  // exclude surface particles from the calculations.
 	  //////////////////////////////////////////////////////////////////
 	  
 	  // fraction of bcc particles in entire system

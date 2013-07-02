@@ -8,11 +8,9 @@
 #include "diagonalize.h"
 #include "gtensor.h"
 
-// gtensor.cpp - functions to compute the gyration tensor.
-//	Be warned, periodic boundary conditions need to be removed before
-//	computing this. Here this is achieved via the function replicate.
-
 using std::vector;
+
+// Constructor for gyration tensor (see gtensor.h)
 
 GTensor::GTensor(const ParticleSystem& psystem, const vector<int>& cnums)
 {
@@ -36,11 +34,11 @@ GTensor::GTensor(const ParticleSystem& psystem, const vector<int>& cnums)
 	  diagonalize(g, 2, res, topeig);
 }	  
 
-// Take positions of particles in largest cluster.  
-//	Return particles in the largest cluster, but without periodic BCS.
-//	The trick here is to replicate the system in x and y directions,
-//	then to find the largest cluster in this large system
-//	(note the system is assumed not to be periodic in z)
+// Take positions of particles in largest cluster.  Return particles
+//	in the largest cluster, but without periodic BCS.  The trick here
+//	is to replicate the system in x and y directions, then to find the
+//	largest cluster in this large system (note the system is assumed
+//	not to be periodic in z)
 
 vector<Particle> posnoperiodic(const vector<Particle>& cpars,
 										 const Box& simbox)
@@ -122,7 +120,8 @@ vector<double> cofmass(const vector<Particle>& particles)
 	  return cm;
 }
 
-// Radius of gyration tensor (not diagonalised).
+// Return radius of gyration tensor (not diagonalised).  The particles
+// should have periodic bounary conditions removed.
 
 tensor gytensor(const vector<Particle>& particles)
 {
@@ -157,10 +156,13 @@ tensor gytensor(const vector<Particle>& particles)
 	  return gyt;
 }
 
-// Return radius of gyration tensor
-// pars should be 
+// Return radius of gyration tensor.  Note that periodic boundary
+//	conditions need to be removed before computing this. Here this is
+//	achieved via the function replicate (defined above).
 
-tensor getgytensor(const ParticleSystem& psystem, const vector<int>& cnums)
+tensor getgytensor(const ParticleSystem& psystem,
+						 const vector<int>& cnums) // indices into psystem.allpars
+                                             // of particles in largest cluster
 {
 	  // build up vector of particles which are largest cluster only
 	  vector<Particle>::size_type ncl = cnums.size();
@@ -169,43 +171,16 @@ tensor getgytensor(const ParticleSystem& psystem, const vector<int>& cnums)
 			 clusterpars[i].pos[0] = psystem.allpars[cnums[i]].pos[0];
 			 clusterpars[i].pos[1] = psystem.allpars[cnums[i]].pos[1];
 			 clusterpars[i].pos[2] = psystem.allpars[cnums[i]].pos[2];
-			 // setting the symbol is not really necessary
+			 // setting the symbol is not really necessary, do it anyway
 			 clusterpars[i].symbol = 'S';
 	  }
 
 	  // take away periodic bcs
 	  vector<Particle> cparsnop = posnoperiodic(clusterpars, psystem.simbox);
 
-	  // cparsnop now stores the positions (periodic boundary conditions
-	  // removed) of the particles in the largest cluster
+	  // cparsnop now stores the positions (periodic boundary
+	  // conditions removed) of the particles in the largest cluster
 	  // writexyz(cparsnop, "testrep.xyz");
 
 	  return gytensor(cparsnop);
 }
-
-/* uncomment and compile with conncomponents.cpp to test gyration tensor
-int main()
-{
-
-	  Particle p1,p2;
-	  p1.pos[0] = 0;
-	  p1.pos[1] = 0;
-	  p1.pos[2] = 0;
-	  p2.pos[0] = 1;
-	  p2.pos[1] = 0;
-	  p2.pos[2] = 0;	  
-			 
-	  vector<Particle> ps;
-	  ps.push_back(p1);
-	  ps.push_back(p2);
-
-	  tensor g = gytensor(ps);
-
-	  for (int i = 0; i != 3; ++i) {
-			 for (int j = 0; j != 3; ++j) {
-					std::cout << g[i][j] << " ";
-			 }
-			 std::cout << std::endl;
-	  }
-}
-*/

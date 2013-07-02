@@ -25,8 +25,7 @@ bool not_space(char c)
 	  return !isspace(c);
 }
 
-/* Split a string.
- */
+// Split a string.
 
 vector<string> split(const string& str)
 {
@@ -50,8 +49,7 @@ vector<string> split(const string& str)
 	  return ret;
 }
 
-/* Write vector of particles to output file in the normal XYZ format.
- */
+// Write vector of particles to output file in the normal XYZ format.
 
 void writexyz(vector<Particle> pars, const string fname, bool writesymbols = true)
 {
@@ -68,12 +66,11 @@ void writexyz(vector<Particle> pars, const string fname, bool writesymbols = tru
 					outfile << i->symbol << " ";
 			 outfile << i->pos[0] << " " << i->pos[1] << " " << i->pos[2] << endl;
 	  }
-	  /* We should maybe return 0 here instead to indicate success */
+	  // We should maybe return 0 here instead to indicate success
 	  return;
 }
 
-/* Read input parameters.  See 'params.out'
- */
+// Read input parameters.  See 'params.out'
 
 map<string, string> readparams(const string fname)
 {
@@ -98,8 +95,7 @@ map<string, string> readparams(const string fname)
 	  return params;
 }
 
-/* Read vector of particles from file in the normal XYZ format.
- */
+// Read vector of particles from file in the normal XYZ format.
 
 vector<Particle> readxyz(const string fname, bool symbols = true,
 								 bool gettypes = true)

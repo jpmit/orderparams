@@ -22,8 +22,8 @@ inline int fact(const int n)
 	  return ifact;
 }
 
-// Computes the associated Legendre polynomial P_l^m(x),
-// for positive m only.
+// Computes the associated Legendre polynomial P_l^m(x), for positive
+// m only.
 
 double plm(const int lval, const int mval, const double x)
 {

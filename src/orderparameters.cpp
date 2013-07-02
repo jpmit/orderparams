@@ -49,8 +49,8 @@ double eigsmall(const GTensor& gt)
 	  return gt.fulleig[0];
 }
 
-// squared radius of gyration
-// note this is the square of R_g as defined by Jungblutt & Dellago
+// squared radius of gyration.  note this is the square of R_g as
+// defined by Jungblutt & Dellago
 
 double rogsquared(const GTensor& gt)
 {
@@ -80,8 +80,9 @@ double eigsmalltop(const GTensor& gt)
 }
 
 // total number of crystalline 'connections' for a group of particles
-// Note crystalline 'connections' means the same ascrystalline 'links'.
-// Note that this only makes sense for q6 (don't use for q4).
+// Note crystalline 'connections' means the same as crystalline
+// 'links'.  Note that this only makes sense for q6 (don't use for
+// q4).
 
 int numconnections(const QData& q6data, const vector<int>& cnums)
 {
