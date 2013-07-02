@@ -25,11 +25,11 @@ struct ParticleSystem
 	  vector<Particle> allpars;
 	  Box simbox;
 	  // number of surface particles
-	  int nsurf;
+	  unsigned int nsurf;
 	  // value of Sij for particles i and j to form a crystal link
 	  double linval;
 	  // num links for particle to be in crystalline environment
-	  int nlinks;
+	  unsigned int nlinks;
 	  // neighbour separation, if rij < nsep particles are neighbours
 	  double nsep;
 };

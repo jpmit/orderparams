@@ -70,8 +70,7 @@ vector<int> getnlinks(const array2d& qlmt, const vector<int>& numneigh,
 	  return numlinks;
 }
 
-// average values in vector qlm.  This could in principle be made a
-// template function!
+// average values in vector qlm. 
 
 vector<complex<double> > averageqlm(const array2d& qlm,
 												const vector<int>& pnums,

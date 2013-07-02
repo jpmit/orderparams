@@ -143,10 +143,10 @@ vector<LDCLASS> classifyparticlesld(const ParticleSystem& psystem,
 												const QData& q4data,
 												const QData& q6data)
 {
-	  int npar = q6data.ql.size();
+	  unsigned int npar = q6data.ql.size();
 	  vector<LDCLASS> parclass(npar);
 
-	  for (int i = 0; i != npar; ++i) {
+	  for (unsigned int i = 0; i != npar; ++i) {
 			 if (i < psystem.nsurf) {
 					parclass[i] = SURFACE;
 			 }

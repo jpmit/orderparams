@@ -7,7 +7,7 @@ inline std::vector<int> range(int start, int end)
 {
 	  std::vector<int> ret;
 	  ret.reserve(end - start);
-	  for (std::vector<int>::size_type i = start; i != end; ++i)
+	  for (int i = start; i != end; ++i)
 			 ret.push_back(i);
 	  return ret;
 }

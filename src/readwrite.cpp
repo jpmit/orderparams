@@ -133,7 +133,7 @@ vector<Particle> readxyz(const string fname, bool symbols = true,
 
  	  string sline;
 	  vector<string> spline;
-	  int ncols = 3 + symbols; // number of columns in XYZ file
+	  unsigned int ncols = 3 + symbols; // number of columns in XYZ file
 	  Particle par;
 	  int nread = 0;
 	  int lread = 1;
