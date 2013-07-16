@@ -1,11 +1,25 @@
 orderparams
+James Mithen
+j.mithen@surrey.ac.uk
 
-code for computing order parameters
+code for computing order parameters.
+see src/main.cpp for the order parameters computed.
+see example/ directory for a params file for running the code.
 
+To compile the code, navigate to the main directory and type 'make'.
+
+To run the example, navigate to the examples directory and type
+../orderparams/ params.out
 
 TODO
 -----------
 
+- improve (simplify) Makefile
+
 - improve reading parameters from params.out (?)
   could possibly read from params.pkl with interface to
   python code.
+
+- in box.h make box lengths private and create method(s) for changing size
+
+- add more order parameters?

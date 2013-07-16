@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
 	  // lboxx      - x dimension of simulation box
 	  // lboxy      - y dimension     ""
 	  // lboxz      - z dimension     ""
-	  // nsep       - neighbour separation in units of sigma
+	  // stillsep   - neighbour separation in units of sigma
 	  // zperiodic  - box periodic or not (either "True" or "False")
 	  // nparsurf   - number of surface particles
 	  // q6link     - threshold for Sij to be considered a link
