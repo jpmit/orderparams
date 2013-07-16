@@ -1,0 +1,10 @@
+# parameters needed for orderparams code
+filename pos19_107.xyz
+lboxx 22.4492409662
+lboxy 21.3857742696
+lboxz 14.2055395823
+stillsep 1.5
+zperiodic False
+nparsurf 1320
+q6link 0.65
+q6numlinks 6
