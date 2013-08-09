@@ -8,11 +8,16 @@ LDLIBS = -l gsl -l blas
 OBJS = $(addprefix $(OBJDIR)/, main.o conncomponents.o \
          opfunctions.o readwrite.o qlmfunctions.o gtensor.o diagonalize.o \
          qdata.o particlesystem.o orderparameters.o utility.o)
+LDOBJS = $(addprefix $(OBJDIR)/, ldtool.o conncomponents.o opfunctions.o \
+           readwrite.o qlmfunctions.o qdata.o particlesystem.o)
 
 all: orderparams
 
 orderparams: $(OBJS)
 	g++ $(LDFLAGS) -o orderparams $(OBJS) $(LDLIBS)
+
+ldtool: $(LDOBJS)
+	g++ $(LDFLAGS) -o ldtool $(LDOBJS)
 
 main.o : main.cpp particlesystem.h orderparameters.h qdata.h constants.h \
          utility.h gtensor.h
@@ -40,6 +45,8 @@ orderparameters.o : orderparameters.cpp constants.h qlmfunctions.h \
                     qdata.h gtensor.h orderparameters.h
 
 utility.o : utility.cpp
+
+ldtool.o : ldtool.cpp
 
 clean:
 	rm -f $(OBJDIR)/*.o

@@ -116,14 +116,14 @@ QData::QData(const ParticleSystem& psystem, const int _lval) :
 // Classify particles as either Liquid-like or crystalline according
 // to the Ten-Wolde Frenkel (TF) method.
 
-vector<TFCLASS> classifyparticlestf(const vector<int>& numlinks,
-												const int nlinks)
+vector<TFCLASS> classifyparticlestf(const ParticleSystem& psystem,
+												const QData& q6data)
 {
 	  int npar = q6data.ql.size();
 	  vector<TFCLASS> parclass(npar, LIQ);
 
 	  // from nlinks, work out which particles are xtal
-	  vector<int> xps = xtalpars(numlinks, nlinks);
+	  vector<int> xps = xtalpars(q6data.numlinks, psystem.nlinks);
 	  
 	  for (vector<LDCLASS>::size_type i = 0; i != psystem.nsurf; ++i) {
 			 parclass[i] = SURF;
@@ -134,26 +134,6 @@ vector<TFCLASS> classifyparticlestf(const vector<int>& numlinks,
 	  }
 
 	  return parclass;
-}
-
-// Return vector of indices of particles identified as crystalline by
-// the number of 'links' between the particle and its neighbours.
-// Note this is the 'Ten-Wolde Frenkel' approach to definining
-// crystallinity.
-
-vector<int> xtalpars(const vector<int>& linknums, const int nlinks)
-{
-	  vector<int> xtalpars;
-
-	  for (vector<int>::size_type i = 0; i != linknums.size(); ++i) {
-			 if (linknums[i] >= nlinks) {
-					// if particle has >=nlinks crystal links, it is in a
-					// crystal environment
-					xtalpars.push_back(i);
-			 }
-	  }
-
-	  return xtalpars;
 }
 
 // Classify particles as FCC, HCP, BCC, LIQUID, ICOSAHEDRAL or SURFACE
@@ -227,7 +207,7 @@ vector<int> largestclustertf(const ParticleSystem& psystem,
 {
 	  // get vector with indices that are all crystal particles
 	  vector<int> xps;
-	  for (vector<TFCLASS>::size_type i = 0; i != tfclass.size(); ++i) {
+	  for (vector<LDCLASS>::size_type i = 0; i != tfclass.size(); ++i) {
 			 if (tfclass[i] == XTAL) {
 					xps.push_back(i);
 			 }
