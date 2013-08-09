@@ -1,5 +1,5 @@
 # parameters needed for orderparams code
-filename pos19_107.xyz
+filename example/pos19_107.xyz
 lboxx 22.4492409662
 lboxy 21.3857742696
 lboxz 14.2055395823
