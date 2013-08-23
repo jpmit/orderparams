@@ -1,3 +1,5 @@
+# TODO: simplify this Makefile
+
 # path to source files
 SRCDIR = src
 OBJDIR = src

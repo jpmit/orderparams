@@ -14,9 +14,11 @@ using std::endl;
 using std::string;
 
 // Compute the values of all order parameters for a given
-// configuration Currently there are 45 different order parameters
+// configuration. Currently there are 42 different order parameters
 // output, but a lot of these are 'duplicated' because there are two
-// different clusters (see below).
+// different definitions of the largest crystalline cluster in the
+// system (one uses the so-called Ten-Wolde Frenkel approach, the
+// other uses the Lecher-Dellago approach ).
 
 int main(int argc, char* argv[])
 {
@@ -163,7 +165,7 @@ int main(int argc, char* argv[])
 	  cout << "Rbar_g,1LD " << eigsmall(ldgtensor) << endl;	  
 
 	  // smallest eigenvalue of gyration tensor for TF cluster
-	  cout << "Rbar_g,1LD " << eigsmall(tfgtensor) << endl;
+	  cout << "Rbar_g,1TF " << eigsmall(tfgtensor) << endl;
 
 	  // middle eigenvalue of gyration tensor for LD cluster
 	  cout << "Rbar_g,2LD " << eigmid(ldgtensor) << endl;
