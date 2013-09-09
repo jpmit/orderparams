@@ -1,9 +1,3 @@
-// ldtool.cpp
-// James Mithen
-// j.mithen@surrey.ac.uk
-
-// Tool for outputting LD particles
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -15,6 +9,12 @@ using std::vector;
 using std::cout;
 using std::endl;
 using std::string;
+
+// Tool for outputting classification of each particle using the LD
+// method.  This reads in a file with the required parameters, and
+// outputs an XYZ co-ordinate file, which can be viewed with molecular
+// visualisation software, e.g. JMOL.  See README and the example for
+// further information and an example parameter file.
 
 int main(int argc, char* argv[])
 {

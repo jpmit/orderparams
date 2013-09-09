@@ -7,42 +7,42 @@
 
 using std::vector;
 
-// Size of cluster according to Lechner Dellago (LD) method
+// Size of cluster according to Lechner Dellago (LD) method.
 
 int csizeld(const vector<int>& ldcnums)
 {
 	  return ldcnums.size();
 }
 
-// Size of cluster according to Ten-Wolde Frenkel (TF) method
+// Size of cluster according to Ten-Wolde Frenkel (TF) method.
 
 int csizetf(const vector<int>& tfcnums)
 {
 	  return tfcnums.size();
 }
 
-// Average Q value of a group of particles, e.g. those in cluster
+// Average Q value of a group of particles, e.g. those in cluster.
 
 double qavgroup(const QData& qdata, const vector<int>& pnums)
 {
 	  return Qpars(qdata.qlm, pnums, qdata.lval);
 }
 
-// Largest eigenvalue of complete gyration tensor
+// Largest eigenvalue of complete gyration tensor.
 
 double eiglarge(const GTensor& gt)
 {
 	  return gt.fulleig[2];
 }
 
-// Middle eigenvalue of complete gyration tensor
+// Middle eigenvalue of complete gyration tensor.
 
 double eigmid(const GTensor& gt)
 {
 	  return gt.fulleig[1];
 }
 
-// Smallest eigenvalue of complete gyration tensor
+// Smallest eigenvalue of complete gyration tensor.
 
 double eigsmall(const GTensor& gt)
 {
@@ -50,14 +50,14 @@ double eigsmall(const GTensor& gt)
 }
 
 // squared radius of gyration.  note this is the square of R_g as
-// defined by Jungblutt & Dellago
+// defined by Jungblutt & Dellago.
 
 double rogsquared(const GTensor& gt)
 {
 	  return gt.fulleig[0] + gt.fulleig[1] + gt.fulleig[2];
 }
 
-// (3,3) element of non-diagonalise gyration tensor
+// (3,3) element of non-diagonalise gyration tensor.
 
 double element33(const GTensor& gt)
 {
@@ -65,14 +65,14 @@ double element33(const GTensor& gt)
 	  return gt.gtensor[2][2];
 }
 
-// largest eigenvalue of 'top-diagonised' gyration tensor
+// largest eigenvalue of 'top-diagonised' gyration tensor.
 
 double eiglargetop(const GTensor& gt)
 {
 	  return gt.topeig[1];
 }
 
-// smallest eigenvalue of 'top-diagonalised' gyration tensor
+// smallest eigenvalue of 'top-diagonalised' gyration tensor.
 
 double eigsmalltop(const GTensor& gt)
 {

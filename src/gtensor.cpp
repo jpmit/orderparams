@@ -10,7 +10,7 @@
 
 using std::vector;
 
-// Constructor for gyration tensor (see gtensor.h)
+// Constructor for gyration tensor (see gtensor.h).
 
 GTensor::GTensor(const ParticleSystem& psystem, const vector<int>& cnums)
 {
@@ -38,7 +38,7 @@ GTensor::GTensor(const ParticleSystem& psystem, const vector<int>& cnums)
 //	in the largest cluster, but without periodic BCS.  The trick here
 //	is to replicate the system in x and y directions, then to find the
 //	largest cluster in this large system (note the system is assumed
-//	not to be periodic in z)
+//	not to be periodic in z).
 
 vector<Particle> posnoperiodic(const vector<Particle>& cpars,
 										 const Box& simbox)
@@ -48,8 +48,7 @@ vector<Particle> posnoperiodic(const vector<Particle>& cpars,
 
 	  // hack to ignore periodic bcs
 	  Box bigbox = simbox;
-	  bigbox.lboxx *= 20;
-	  bigbox.lboxy *= 20;
+	  bigbox.setdims(simbox.lboxx*20, simbox.lboxy*20, simbox.lboxz);
 
 	  graph xgraph = getxgraph(repcpars, range(0, repcpars.size()), bigbox);
 	  vector<int> cluspars = largestcomponent(xgraph);

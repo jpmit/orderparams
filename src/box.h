@@ -6,39 +6,48 @@
 #include "particle.h"
 #include "box.h"
 
-/* Simulation box; the member functions handle the periodic bcs.
- */
+// Simulation box; the member functions handle the periodic boundary
+// conditions, and whether two particles are 'neighbours'.
 
 class Box
 {
 public:
 	  Box(){ }
-     Box(double lx, double ly, double lz, double ns = 1.5, bool pz = false) :
+     Box(double lx, double ly, double lz, double ns = 1.5,
+			bool pz = false) :
 	  lboxx(lx), lboxy(ly), lboxz(lz), nsep(ns), nsepsq(ns*ns), periodicz(pz){}
+
+	  // functions for separation between two particles
 	  inline void sep(const Particle& p1, const Particle& p2, double* s) const;
 	  inline double sepsq(const Particle& p1, const Particle& p2) const;
-	  inline bool isneigh(const Particle& p1, const Particle& p2, double& r2) const;
+
+	  // these ones also return whether the particles are neighbours
+	  inline bool isneigh(const Particle& p1, const Particle& p2,
+								 double& r2) const;
 	  inline bool isneigh(double* s, double&r2) const;
+
+	  // testing whether positions are valid (in box)
 	  inline bool posvalid(double* pos) const;
 	  inline bool getvalidifnot(double* pos) const;
-	  friend std::vector<Particle>
-			 initpositions(int npar, const Box& simbox, double rcinit);
+
+	  inline void setdims(double lx, double ly, double lz);
+	  
+	  // the following friends are in gtensor.cpp
 	  friend std::vector<Particle>
 			 replicate(const std::vector<Particle>&, const Box&);
-	  friend std::vector<Particle> xtalposnoperiodic(const std::vector<Particle>&,
-																	 const Box&);
-	  // these need to be public at the moment (see gyration.cpp)
+	  friend std::vector<Particle>
+			 posnoperiodic(const std::vector<Particle>&, const Box&);
+
+private:
 	  double lboxx;
 	  double lboxy;
-	  double lboxz;	  
-private:
+	  double lboxz;	  	  
 	  double nsep;
 	  double nsepsq;
 	  bool periodicz;
 };
 
-/* Is pos = {x, y, z} valid?  If so make pos modulo periodic bcs.
- */
+// Is pos = {x, y, z} valid?  If so make pos modulo periodic bcs.
 
 inline bool Box::posvalid(double* pos) const
 {
@@ -67,8 +76,7 @@ inline bool Box::posvalid(double* pos) const
 	  return true;
 }
 
-/* square of separation between two particles.
- */
+// Square of separation between two particles.
 
 inline double Box::sepsq(const Particle& p1, const Particle& p2) const
 {
@@ -77,8 +85,7 @@ inline double Box::sepsq(const Particle& p1, const Particle& p2) const
 	  return (s[0]*s[0] + s[1]*s[1] + s[2]*s[2]);
 }
 
-/* separation between two particles modulo periodic bcs.
- */
+// Separation between two particles modulo periodic bcs.
 
 inline void Box::sep(const Particle& p1, const Particle& p2, double* s) const
 {
@@ -114,8 +121,7 @@ inline void Box::sep(const Particle& p1, const Particle& p2, double* s) const
 	  return;
 }
 
-/* Are p1 and p2 neighbours?  Also return square separation modulo periodic bcs.
- */
+// Are p1 and p2 neighbours?  Also return square separation modulo periodic bcs.
 
 inline bool Box::isneigh(const Particle& p1, const Particle& p2, double& rsq) const
 {
@@ -133,8 +139,7 @@ inline bool Box::isneigh(const Particle& p1, const Particle& p2, double& rsq) co
 	  return false;
 }
 
-/* Same as above but first argument points to separation array.
- */
+// Same as above but first argument points to separation array.
 
 inline bool Box::isneigh(double *s, double& rsq) const
 {
@@ -145,6 +150,15 @@ inline bool Box::isneigh(double *s, double& rsq) const
 					return true;
 	  }
 	  return false;
+}
+
+// Resize box.
+
+inline void Box::setdims(double lx, double ly, double lz)
+{
+	  this->lboxx = lx;
+	  this->lboxy = ly;
+	  this->lboxz = lz;
 }
 
 #endif

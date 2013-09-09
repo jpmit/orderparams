@@ -47,8 +47,9 @@ USAGE
 --------
 
 An example input file, 'params.out' is contained in the examples/
-directory.  To run both executables for the example provided, navigate
-to the root directory and type
+directory.  To run both executables for the example provided, first
+compile the code using the instructions above, then navigate to the
+root directory that contains the executables and type
 
     $ ./orderparams examples/params.out
 
@@ -235,21 +236,25 @@ Jmol.
   </tr>
 </table>
 
+LICENSE
+----------
+
+GPL v3, see http://www.gnu.org/licenses/gpl-3.0.txt
+
 TODO
 -----------
 
-* improve docs (this file and source files)
+* improve docs (this file and source files).
 
-* make error handling more comprehensive
+* make error handling more comprehensive.
 
-* remove dependency on GSL library (use Boost instead?)
+* remove dependency on GSL library (use Boost instead?).
 
-* simplify Makefile
+* simplify Makefile.
 
-* improve reading parameters from params.out (?). Could possibly read
-  from params.pkl with interface to python code.
+* improve reading parameters from params.out (?).
 
 * in box.h make box lengths private and create method(s) for changing
-  size
+  size.
 
 * add more order parameters?

@@ -18,7 +18,8 @@ using std::string;
 // output, but a lot of these are 'duplicated' because there are two
 // different definitions of the largest crystalline cluster in the
 // system (one uses the so-called Ten-Wolde Frenkel approach, the
-// other uses the Lecher-Dellago approach ).
+// other uses the Lecher-Dellago approach ). See README and the
+// example for further information and an example parameter file.
 
 int main(int argc, char* argv[])
 {

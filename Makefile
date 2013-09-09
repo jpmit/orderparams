@@ -9,7 +9,7 @@ LDFLAGS =
 LDLIBS = -l gsl -l blas
 OBJS = $(addprefix $(OBJDIR)/, main.o conncomponents.o \
          opfunctions.o readwrite.o qlmfunctions.o gtensor.o diagonalize.o \
-         qdata.o particlesystem.o orderparameters.o utility.o)
+         qdata.o particlesystem.o orderparameters.o)
 LDOBJS = $(addprefix $(OBJDIR)/, ldtool.o conncomponents.o opfunctions.o \
            readwrite.o qlmfunctions.o qdata.o particlesystem.o)
 
@@ -45,8 +45,6 @@ particlesystem.o : particlesystem.cpp particlesystem.h readwrite.h box.h \
 
 orderparameters.o : orderparameters.cpp constants.h qlmfunctions.h \
                     qdata.h gtensor.h orderparameters.h
-
-utility.o : utility.cpp
 
 ldtool.o : ldtool.cpp
 

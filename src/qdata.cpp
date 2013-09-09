@@ -74,10 +74,8 @@ using std::norm;
 //      The size of the largest cluster for which all particles are
 //      in a crystalline environment is the familiar Frenkel/ ten Wolde
 //      order parameter (which I call N_cl in my papers).
-//
-// vi)  Next,we can compute the average qlm(i)
 
-// Constructor for QData object
+// Constructor for QData object.
 
 QData::QData(const ParticleSystem& psystem, const int _lval) :
 	  lval(_lval)
@@ -176,6 +174,8 @@ vector<LDCLASS> classifyparticlesld(const ParticleSystem& psystem,
 	  return parclass;
 }
 
+// Largest cluster using LD classifications.
+
 vector<int> largestclusterld(const ParticleSystem& psystem,
 									  const vector<LDCLASS>& ldclass)
 {
@@ -201,6 +201,8 @@ vector<int> largestclusterld(const ParticleSystem& psystem,
 	  reindex(cnums, xps);
 	  return cnums;
 }
+
+// Largest cluster using TF classifications.
 
 vector<int> largestclustertf(const ParticleSystem& psystem,
 									  const vector<TFCLASS>& tfclass)

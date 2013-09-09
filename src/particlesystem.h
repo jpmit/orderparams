@@ -10,10 +10,8 @@ using std::vector;
 using std::string;
 
 // particlesystem object contains all the necessary information about
-// the system:
-//
-// It is a struct since it encasulates data that is designed to be
-// open i.e. accessed.
+// the system.  It is a struct since it encapsulates data that is
+// designed to be accessed directly.
 
 struct ParticleSystem
 {

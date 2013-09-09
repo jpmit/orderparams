@@ -1,8 +1,7 @@
 #ifndef PARTICLE_H
 #define PARTICLE_H
 
-/* Simple particle class for particle simulations e.g. MC/MD
- */
+// Simple particle class for particle simulations e.g. MC/MD.
 
 struct Particle
 {

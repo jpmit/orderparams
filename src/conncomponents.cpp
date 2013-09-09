@@ -18,7 +18,7 @@ using std::endl;
 graph getxgraph(const vector<Particle>& particles,
 					 const vector<int>& xpars, const Box& simbox)
 {
-	  graph G; // graph containing crystal particles as nodes
+	  graph G;
 	  vector<int>::size_type nxtal = xpars.size();
 	  vector<int>::size_type i,j;
 	  double sep;

@@ -3,6 +3,8 @@
 
 #include<vector>
 
+// return vector containing integers ordered in range [start,end).
+
 inline std::vector<int> range(int start, int end)
 {
 	  std::vector<int> ret;
@@ -12,6 +14,11 @@ inline std::vector<int> range(int start, int end)
 	  return ret;
 }
 
+// reindex vector in integers.  e.g. if indx1 = [0, 3, 5], it becomes
+// [indx2[0], indx2[3], indx2[5].  This is used for getting the xtal
+// particle indexes in absolute terms, rather than them being indexes
+// into a list of xtal particles.
+
 inline void reindex(std::vector<int>& indx1, const std::vector<int>& indx2)
 {
 	  for (std::vector<int>::size_type i = 0; i != indx1.size(); ++i) {
@@ -20,5 +27,3 @@ inline void reindex(std::vector<int>& indx1, const std::vector<int>& indx2)
 }
 
 #endif
-
-
