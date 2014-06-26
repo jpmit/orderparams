@@ -55,10 +55,10 @@ vector<int> getnlinks(const array2d& qlmt, const vector<int>& numneigh,
       for (int j = 0; j != numneigh[i]; ++j) {
          k = lneigh[i][j];
          linval = 0.0;
-         for (int m = 0; m != 2*lval + 1; ++m) {
+         for (int m = 0; m != 2 * lval + 1; ++m) {
             // dot product (sometimes denoted Sij)
-            linval += qlmt[i][m].real()*qlmt[k][m].real() +
-                      qlmt[i][m].imag()*qlmt[k][m].imag();
+            linval += qlmt[i][m].real() * qlmt[k][m].real() +
+                      qlmt[i][m].imag() * qlmt[k][m].imag();
          }
          if (linval >= linkval) {
             nlin = nlin + 1;
@@ -77,15 +77,15 @@ vector<complex<double> > averageqlm(const array2d& qlm,
                                     const vector<int>& pnums,
                                     const int lval)
 {
-   vector<complex<double> > qlmaverage(2*lval + 1,0.0);
+   vector<complex<double> > qlmaverage(2 * lval + 1,0.0);
 
    for (array2d::index i = 0; i != pnums.size(); ++i) {
-      for (int m = 0; m != 2*lval + 1; ++m) {
+      for (int m = 0; m != 2 * lval + 1; ++m) {
          qlmaverage[m] += qlm[pnums[i]][m];
       }
    }
      
-   for (int m = 0; m != 2*lval + 1; ++m) {
+   for (int m = 0; m != 2 * lval + 1; ++m) {
       qlmaverage[m] = qlmaverage[m]/ (static_cast<double>(pnums.size()));
    }
 
@@ -105,13 +105,13 @@ double Qpars(const array2d& qlm,       // qlm(i) for every particle i
    vector<complex<double> > qlma = averageqlm(qlm, pnums, lval);
 
    double qvalue = 0.0;
-   for (int m = 0; m != 2*lval + 1; ++m) {
+   for (int m = 0; m != 2 * lval + 1; ++m) {
       // note that norm of complex number is its squared
       // magnitude,i.e. norm(x) = |x|^2
       qvalue += norm(qlma[m]);
    }
 
-   qvalue = sqrt(qvalue*(4.0*PI/(2*lval + 1)));
+   qvalue = sqrt(qvalue * (4.0 * PI / (2 * lval + 1)));
    return qvalue;
 }
 
@@ -165,7 +165,7 @@ double Wpars(const array2d& qlm,       // qlm(i) for all particles i
 
    // compute denominator
    double qvalue = 0.0;
-   for (int m = 0; m != 2*lval + 1; ++m) {
+   for (int m = 0; m != 2 * lval + 1; ++m) {
       // note that norm of complex number is its squared
       // magnitude, i.e. norm(x) = |x|^2
       qvalue += norm(qlma[m]);
@@ -237,7 +237,7 @@ array2d qlmtildes(const array2d& qlm, const vector<int>& numneigh,
                   const int lval)
 {
    int npar = qlm.shape()[0];
-   array2d qlmt(boost::extents[npar][2*lval + 1]);
+   array2d qlmt(boost::extents[npar][2 * lval + 1]);
      
    // normalise each of rows in the matrix, this gives qlmtilde
    for (int i = 0; i != npar; ++i) {
@@ -245,11 +245,11 @@ array2d qlmtildes(const array2d& qlm, const vector<int>& numneigh,
       // will be zero, and so the norm will be zero
       if (numneigh[i] >= 1) {
          double qnorm = 0.0;
-         for (int k = 0; k != 2*lval + 1; ++k) {
+         for (int k = 0; k != 2 * lval + 1; ++k) {
             qnorm = qnorm + norm(qlm[i][k]);
          }
          qnorm = sqrt(qnorm);
-         for (int k = 0; k != 2*lval + 1; ++k) {
+         for (int k = 0; k != 2 * lval + 1; ++k) {
             qlmt[i][k] = qlm[i][k]/qnorm;
          }
       }
@@ -268,10 +268,10 @@ array2d qlmbars(const array2d& qlm, const vector<vector<int> >& lneigh,
                 const int lval)
 {
    int npar = qlm.shape()[0];
-   array2d qlmbar(boost::extents[npar][2*lval + 1]);     
+   array2d qlmbar(boost::extents[npar][2 * lval + 1]);     
 
    for (int i = 0; i != npar; ++i) {
-      for (int m = 0; m != 2*lval + 1; ++m) {
+      for (int m = 0; m != 2 * lval + 1; ++m) {
          complex<double> qlmval = qlm[i][m];
          // add contribution to qlmval from neighbours
          int nn = lneigh[i].size(); // num neighbours
@@ -336,7 +336,7 @@ array2d qlms(const vector<Particle>& particles, const Box& simbox,
          }
       }
 
-      // We now have N_b(i)*qlm(i) for particle i stored in qlm[i][k]
+      // We now have N_b(i) * qlm(i) for particle i stored in qlm[i][k]
       // Now divide by N_b(i)
       if (numneigh[i] >= 1) {
          for (int k = 0; k != 2 * lval + 1; ++k) 

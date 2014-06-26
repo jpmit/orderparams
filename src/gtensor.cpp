@@ -50,7 +50,7 @@ vector<Particle> posnoperiodic(const vector<Particle>& cpars,
 
    // hack to ignore periodic bcs
    Box bigbox = simbox;
-   bigbox.setdims(simbox.lboxx*20, simbox.lboxy*20, simbox.lboxz);
+   bigbox.setdims(simbox.lboxx * 20, simbox.lboxy * 20, simbox.lboxz);
 
    graph xgraph = getxgraph(repcpars, range(0, repcpars.size()), bigbox);
    vector<int> cluspars = largestcomponent(xgraph);
@@ -83,23 +83,23 @@ vector<Particle> replicate(const vector<Particle>& pars, const Box& simbox)
       // top
       newpars[i + npar].pos[1] += simbox.lboxy;
       // top right
-      newpars[i + 2*npar].pos[0] += simbox.lboxx;
-      newpars[i + 2*npar].pos[1] += simbox.lboxy;			 
+      newpars[i + 2 * npar].pos[0] += simbox.lboxx;
+      newpars[i + 2 * npar].pos[1] += simbox.lboxy;			 
       // right
-      newpars[i + 3*npar].pos[0] += simbox.lboxx;
+      newpars[i + 3 * npar].pos[0] += simbox.lboxx;
       // bottom right
-      newpars[i + 4*npar].pos[0] += simbox.lboxx;
-      newpars[i + 4*npar].pos[1] -= simbox.lboxy;			 			 
+      newpars[i + 4 * npar].pos[0] += simbox.lboxx;
+      newpars[i + 4 * npar].pos[1] -= simbox.lboxy;			 			 
       // bottom
-      newpars[i + 5*npar].pos[1] -= simbox.lboxy;			 			 
+      newpars[i + 5 * npar].pos[1] -= simbox.lboxy;			 			 
       // bottom left
-      newpars[i + 6*npar].pos[0] -= simbox.lboxx;
-      newpars[i + 6*npar].pos[1] -= simbox.lboxy;			 			 
+      newpars[i + 6 * npar].pos[0] -= simbox.lboxx;
+      newpars[i + 6 * npar].pos[1] -= simbox.lboxy;			 			 
       // left
-      newpars[i + 7*npar].pos[0] -= simbox.lboxx;
+      newpars[i + 7 * npar].pos[0] -= simbox.lboxx;
       // top left
-      newpars[i + 8*npar].pos[0] -= simbox.lboxx;
-      newpars[i + 8*npar].pos[1] += simbox.lboxy;
+      newpars[i + 8 * npar].pos[0] -= simbox.lboxx;
+      newpars[i + 8 * npar].pos[1] += simbox.lboxy;
    }
 
    return newpars;
@@ -109,7 +109,7 @@ vector<Particle> replicate(const vector<Particle>& pars, const Box& simbox)
 
 vector<double> cofmass(const vector<Particle>& particles)
 {
-   vector<double> cm(3,0.0);
+   vector<double> cm(3, 0.0);
 	  
    vector<Particle>::size_type i;
    vector<Particle>::size_type npar = particles.size();

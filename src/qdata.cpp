@@ -85,7 +85,7 @@ QData::QData(const ParticleSystem& psystem, const int _lval) : lval(_lval)
    lneigh.resize(npar); // neighbour particle nums for each particle
 
    // matrix of qlm values
-   qlm.resize(boost::extents[npar][2*lval + 1]);
+   qlm.resize(boost::extents[npar][2 * lval + 1]);
    qlm = qlms(psystem.allpars, psystem.simbox, numneigh, lneigh, lval);
 
    // Lechner dellago eq 6

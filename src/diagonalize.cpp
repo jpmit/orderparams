@@ -26,7 +26,7 @@ void diagonalize(double* data, const int dim, double* res, double* eig)
 
       // res stores eigenvectors as columns
       for (int j = 0; j < dim; ++j) {
-         res[i + dim*j] = gsl_vector_get(&evec_i.vector, j);
+         res[i + dim * j] = gsl_vector_get(&evec_i.vector, j);
       }
       // eig stores eigenvalues
       eig[i] = eval_i;
@@ -44,7 +44,7 @@ void printeig(const double* res, const double* eig, const int dim)
       cout << "eigenvalue = " << eig[i] << endl;
       cout << "eigenvector = " << endl;
       for (int j = 0; j != dim; ++j) {
-         cout << res[i + dim*j] << endl;
+         cout << res[i + dim * j] << endl;
       }
    }
 }
