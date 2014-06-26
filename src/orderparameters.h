@@ -23,16 +23,16 @@ int numconnections(const QData&, const std::vector<int>&);
 
 template <class etype>
 double parfrac(const std::vector<etype>& pclass, const std::vector<int>& cnums,
-					const etype plabel)
+               const etype plabel)
 {
-	  int num = 0;
-	  for (std::vector<int>::size_type i = 0; i != cnums.size(); ++i) {
-			 if (pclass[cnums[i]] == plabel) {
-					++num;
-			 }
-	  }
+   int num = 0;
+   for (std::vector<int>::size_type i = 0; i != cnums.size(); ++i) {
+      if (pclass[cnums[i]] == plabel) {
+         ++num;
+      }
+   }
 
-	  return static_cast<double>(num) / cnums.size();
+   return static_cast<double>(num) / cnums.size();
 }
 
 // template for finding list of particles of a particular type
@@ -43,26 +43,25 @@ double parfrac(const std::vector<etype>& pclass, const std::vector<int>& cnums,
 
 template <class etype>
 std::vector<int> nparatleastone(const std::vector<etype>& pclass,
-										  const std::vector<int>& cnums,
-										  const etype plabel,
-										  const std::vector<std::vector<int> >& lneigh)
+                                const std::vector<int>& cnums,
+                                const etype plabel,
+                                const std::vector<std::vector<int> >& lneigh)
 {
-	  std::vector<int> indexes;
-	  for (typename std::vector<etype>::size_type i = 0; i != pclass.size(); ++i) {
-			 if (pclass[i] == plabel) { // e.g. we are a liquid particle
-					// go through all neighbours
-					for (vector<int>::size_type j = 0; j != lneigh[i].size(); ++j) {
-						  // is the neighbour in the list (usually cluster)?
-						  if (find(cnums.begin(), cnums.end(),
-									  lneigh[i][j]) != cnums.end()) {
-								 indexes.push_back(i);
-										break;
-								 }
-					}
-			 }
-	  }
+   std::vector<int> indexes;
+   for (typename std::vector<etype>::size_type i = 0; i != pclass.size(); ++i) {
+      if (pclass[i] == plabel) { // e.g. we are a liquid particle
+         // go through all neighbours
+         for (vector<int>::size_type j = 0; j != lneigh[i].size(); ++j) {
+            // is the neighbour in the list (usually cluster)?
+            if (find(cnums.begin(), cnums.end(), lneigh[i][j]) != cnums.end()) {
+               indexes.push_back(i);
+               break;
+            }
+         }
+      }
+   }
 
-	  return indexes;
+   return indexes;
 }
 
 #endif

@@ -77,38 +77,36 @@ using std::norm;
 
 // Constructor for QData object.
 
-QData::QData(const ParticleSystem& psystem, const int _lval) :
-	  lval(_lval)
+QData::QData(const ParticleSystem& psystem, const int _lval) : lval(_lval)
 {
-	  // store number of neighbours and neighbour list
-	  vector<Particle>::size_type npar = psystem.allpars.size();
-  	  numneigh.resize(npar, 0); // num neighbours for each particle
-	  lneigh.resize(npar); // vector of neighbour particle nums for
-	                       // each par
+   // store number of neighbours and neighbour list
+   vector<Particle>::size_type npar = psystem.allpars.size();
+   numneigh.resize(npar, 0); // num neighbours for each particle
+   lneigh.resize(npar); // neighbour particle nums for each particle
 
-	  // matrix of qlm values
-	  qlm.resize(boost::extents[npar][2*lval + 1]);
-	  qlm = qlms(psystem.allpars, psystem.simbox, numneigh,
-					 lneigh, lval);
-	  
-	  // Lechner dellago eq 6
-	  array2d qlmb = qlmbars(qlm, lneigh, lval);
+   // matrix of qlm values
+   qlm.resize(boost::extents[npar][2*lval + 1]);
+   qlm = qlms(psystem.allpars, psystem.simbox, numneigh, lneigh, lval);
 
-	  // get qls and wls
-	  ql = qls(qlm);
-	  wl = wls(qlm);	  
-	  // lechner dellago eq 5
-	  qlbar = qls(qlmb);
-	  wlbar = wls(qlmb);
+   // Lechner dellago eq 6
+   array2d qlmb = qlmbars(qlm, lneigh, lval);
 
-	  // compute number of crystalline 'links'
-	  // first get normalised vectors qlm (-l <= m <= l) for computing
-	  // dot product Sij
-	  array2d qlmt = qlmtildes(qlm, numneigh, lval);
+   // get qls and wls
+   ql = qls(qlm);
+   wl = wls(qlm);
+   
+   // lechner dellago eq 5
+   qlbar = qls(qlmb);
+   wlbar = wls(qlmb);
 
-	  // do dot products Sij to get number of links
-	  numlinks = getnlinks(qlmt, numneigh, lneigh, psystem.nsurf,
-								  psystem.nlinks, psystem.linval, lval);
+   // compute number of crystalline 'links'
+   // first get normalised vectors qlm (-l <= m <= l) for computing
+   // dot product Sij
+   array2d qlmt = qlmtildes(qlm, numneigh, lval);
+
+   // do dot products Sij to get number of links
+   numlinks = getnlinks(qlmt, numneigh, lneigh, psystem.nsurf,
+                        psystem.nlinks, psystem.linval, lval);
 }
 
 // Classify particles as either Liquid-like or crystalline according
@@ -117,21 +115,21 @@ QData::QData(const ParticleSystem& psystem, const int _lval) :
 vector<TFCLASS> classifyparticlestf(const ParticleSystem& psystem,
 												const QData& q6data)
 {
-	  int npar = q6data.ql.size();
-	  vector<TFCLASS> parclass(npar, LIQ);
+   int npar = q6data.ql.size();
+   vector<TFCLASS> parclass(npar, LIQ);
 
-	  // from nlinks, work out which particles are xtal
-	  vector<int> xps = xtalpars(q6data.numlinks, psystem.nlinks);
+   // from nlinks, work out which particles are xtal
+   vector<int> xps = xtalpars(q6data.numlinks, psystem.nlinks);
 	  
-	  for (vector<LDCLASS>::size_type i = 0; i != psystem.nsurf; ++i) {
-			 parclass[i] = SURF;
-	  }
+   for (vector<LDCLASS>::size_type i = 0; i != psystem.nsurf; ++i) {
+      parclass[i] = SURF;
+   }
 
-	  for (vector<int>::size_type i = 0; i != xps.size(); ++i) {
-			 parclass[xps[i]] = XTAL;
-	  }
+   for (vector<int>::size_type i = 0; i != xps.size(); ++i) {
+      parclass[xps[i]] = XTAL;
+   }
 
-	  return parclass;
+   return parclass;
 }
 
 // Classify particles as FCC, HCP, BCC, LIQUID, ICOSAHEDRAL or SURFACE
@@ -141,65 +139,65 @@ vector<LDCLASS> classifyparticlesld(const ParticleSystem& psystem,
 												const QData& q4data,
 												const QData& q6data)
 {
-	  unsigned int npar = q6data.ql.size();
-	  vector<LDCLASS> parclass(npar);
+   unsigned int npar = q6data.ql.size();
+   vector<LDCLASS> parclass(npar);
 
-	  for (unsigned int i = 0; i != npar; ++i) {
-			 if (i < psystem.nsurf) {
-					parclass[i] = SURFACE;
-			 }
-			 else {
-					if (q6data.qlbar[i] < 0.3) {
-						  parclass[i] = LIQUID;
-					}
-					else { // particle is solid
-						  if (abs(q6data.wlbar[i]) > 0.05) {
-								 parclass[i] = ICOS;
-						  }
-						  else if (q6data.wlbar[i] > 0.0) {
-								 parclass[i] = BCC;
-						  }
-						  else { // either HCP or FCC
-								 if (q4data.wlbar[i] > 0.0) {
-										parclass[i] = HCP;
-								 }
-								 else {
-										parclass[i] = FCC;
-								 }
-						  }
-					}
-			 }
-	  }
+   for (unsigned int i = 0; i != npar; ++i) {
+      if (i < psystem.nsurf) {
+         parclass[i] = SURFACE;
+      }
+      else {
+         if (q6data.qlbar[i] < 0.3) {
+            parclass[i] = LIQUID;
+         }
+         else { // particle is solid
+            if (abs(q6data.wlbar[i]) > 0.05) {
+               parclass[i] = ICOS;
+            }
+            else if (q6data.wlbar[i] > 0.0) {
+               parclass[i] = BCC;
+            }
+            else { // either HCP or FCC
+               if (q4data.wlbar[i] > 0.0) {
+                  parclass[i] = HCP;
+               }
+               else {
+                  parclass[i] = FCC;
+               }
+            }
+         }
+      }
+   }
 
-	  return parclass;
+   return parclass;
 }
 
 // Largest cluster using LD classifications.
 
 vector<int> largestclusterld(const ParticleSystem& psystem,
-									  const vector<LDCLASS>& ldclass)
+                             const vector<LDCLASS>& ldclass)
 {
-	  // get vector with indices that are all crystal particles
-	  vector<int> xps;
-	  for (vector<LDCLASS>::size_type i = 0; i != ldclass.size(); ++i) {
-			 if ((ldclass[i] == FCC) or (ldclass[i] == HCP) or
-				  (ldclass[i] == BCC) or (ldclass[i] == ICOS)) {
-					xps.push_back(i);
-			 }
-	  }
+   // get vector with indices that are all crystal particles
+   vector<int> xps;
+   for (vector<LDCLASS>::size_type i = 0; i != ldclass.size(); ++i) {
+      if ((ldclass[i] == FCC) or (ldclass[i] == HCP) or
+          (ldclass[i] == BCC) or (ldclass[i] == ICOS)) {
+         xps.push_back(i);
+      }
+   }
 
-	  // graph of xtal particles, with each particle a vertex and each
-	  // link an edge
-	  graph xgraph = getxgraph(psystem.allpars, xps, psystem.simbox);
+   // graph of xtal particles, with each particle a vertex and each
+   // link an edge
+   graph xgraph = getxgraph(psystem.allpars, xps, psystem.simbox);
 
-	  // largest cluster is the largest connected component of graph
-	  vector<int> cnums = largestcomponent(xgraph);
+   // largest cluster is the largest connected component of graph
+   vector<int> cnums = largestcomponent(xgraph);
 
-	  // now largest component returns indexes into array xps, we need
-	  // to reindex so that it contains indices into psystem.allpars
-	  // (see utility.cpp)
-	  reindex(cnums, xps);
-	  return cnums;
+   // now largest component returns indexes into array xps, we need
+   // to reindex so that it contains indices into psystem.allpars
+   // (see utility.cpp)
+   reindex(cnums, xps);
+   return cnums;
 }
 
 // Largest cluster using TF classifications.
@@ -207,24 +205,24 @@ vector<int> largestclusterld(const ParticleSystem& psystem,
 vector<int> largestclustertf(const ParticleSystem& psystem,
 									  const vector<TFCLASS>& tfclass)
 {
-	  // get vector with indices that are all crystal particles
-	  vector<int> xps;
-	  for (vector<LDCLASS>::size_type i = 0; i != tfclass.size(); ++i) {
-			 if (tfclass[i] == XTAL) {
-					xps.push_back(i);
-			 }
-	  }
+   // get vector with indices that are all crystal particles
+   vector<int> xps;
+   for (vector<LDCLASS>::size_type i = 0; i != tfclass.size(); ++i) {
+      if (tfclass[i] == XTAL) {
+         xps.push_back(i);
+      }
+   }
 
-	  // graph of xtal particles, with each particle a vertex and each
-	  // link an edge
-	  graph xgraph = getxgraph(psystem.allpars, xps, psystem.simbox);
+   // graph of xtal particles, with each particle a vertex and each
+   // link an edge
+   graph xgraph = getxgraph(psystem.allpars, xps, psystem.simbox);
 
-	  // largest cluster is the largest connected component of graph
-	  vector<int> cnums = largestcomponent(xgraph);
+   // largest cluster is the largest connected component of graph
+   vector<int> cnums = largestcomponent(xgraph);
 
-	  // now largest component returns indexes into array xps, we need
-	  // to reindex so that it contains indices into psystem.allpars
-	  // (see utility.cpp)
-	  reindex(cnums, xps);
-	  return cnums;	  
+   // now largest component returns indexes into array xps, we need
+   // to reindex so that it contains indices into psystem.allpars
+   // (see utility.cpp)
+   reindex(cnums, xps);
+   return cnums;	  
 }

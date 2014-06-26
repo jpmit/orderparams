@@ -11,42 +11,42 @@ using std::vector;
 
 int csizeld(const vector<int>& ldcnums)
 {
-	  return ldcnums.size();
+   return ldcnums.size();
 }
 
 // Size of cluster according to Ten-Wolde Frenkel (TF) method.
 
 int csizetf(const vector<int>& tfcnums)
 {
-	  return tfcnums.size();
+   return tfcnums.size();
 }
 
 // Average Q value of a group of particles, e.g. those in cluster.
 
 double qavgroup(const QData& qdata, const vector<int>& pnums)
 {
-	  return Qpars(qdata.qlm, pnums, qdata.lval);
+   return Qpars(qdata.qlm, pnums, qdata.lval);
 }
 
 // Largest eigenvalue of complete gyration tensor.
 
 double eiglarge(const GTensor& gt)
 {
-	  return gt.fulleig[2];
+   return gt.fulleig[2];
 }
 
 // Middle eigenvalue of complete gyration tensor.
 
 double eigmid(const GTensor& gt)
 {
-	  return gt.fulleig[1];
+   return gt.fulleig[1];
 }
 
 // Smallest eigenvalue of complete gyration tensor.
 
 double eigsmall(const GTensor& gt)
 {
-	  return gt.fulleig[0];
+   return gt.fulleig[0];
 }
 
 // squared radius of gyration.  note this is the square of R_g as
@@ -54,29 +54,29 @@ double eigsmall(const GTensor& gt)
 
 double rogsquared(const GTensor& gt)
 {
-	  return gt.fulleig[0] + gt.fulleig[1] + gt.fulleig[2];
+   return gt.fulleig[0] + gt.fulleig[1] + gt.fulleig[2];
 }
 
 // (3,3) element of non-diagonalise gyration tensor.
 
 double element33(const GTensor& gt)
 {
-	  // indices of course start at zero!
-	  return gt.gtensor[2][2];
+   // indices of course start at zero!
+   return gt.gtensor[2][2];
 }
 
 // largest eigenvalue of 'top-diagonised' gyration tensor.
 
 double eiglargetop(const GTensor& gt)
 {
-	  return gt.topeig[1];
+   return gt.topeig[1];
 }
 
 // smallest eigenvalue of 'top-diagonalised' gyration tensor.
 
 double eigsmalltop(const GTensor& gt)
 {
-	  return gt.topeig[0];
+   return gt.topeig[0];
 }
 
 // total number of crystalline 'connections' for a group of particles
@@ -86,10 +86,10 @@ double eigsmalltop(const GTensor& gt)
 
 int numconnections(const QData& q6data, const vector<int>& cnums)
 {
-	  int num = 0;
-	  for (vector<int>::size_type i = 0; i != cnums.size(); ++i) {
-			 num += q6data.numlinks[cnums[i]];
-	  }
+   int num = 0;
+   for (vector<int>::size_type i = 0; i != cnums.size(); ++i) {
+      num += q6data.numlinks[cnums[i]];
+   }
 
-	  return num;
+   return num;
 }

@@ -5,11 +5,11 @@
 
 struct Particle
 {
-	  double pos[3];
-	  double vel[3];
-	  double mass;
-	  int type; // this allows for different interaction potentials etc.
-	  char symbol; // for outputting e.g. jmol
+   double pos[3];
+   double vel[3];
+   double mass;
+   int type; // this allows for different interaction potentials etc.
+   char symbol; // for outputting e.g. jmol
 };
 
 #endif
