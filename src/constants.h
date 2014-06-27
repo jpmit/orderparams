@@ -84,6 +84,6 @@ const int WIGNERINDX4[9][3] = { {4, -4,  0},
                                 {1, -1,  0},
                                 {0,  0,  0},
 };
-const int WIGNERPERM4[] = {6,12,6,6,12,6,6,6,1};
+const int WIGNERPERM4[] = {6, 12, 6, 6, 12, 6, 6, 6, 1};
 
 #endif
