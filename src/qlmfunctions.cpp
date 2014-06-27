@@ -121,8 +121,7 @@ double Qpars(const array2d& qlm,       // qlm(i) for every particle i
 
 double Wpars(const array2d& qlm,       // qlm(i) for all particles i
              const vector<int>& pnums, // particle indices
-             const int lval)           // spherical harmonic number
-// (usually 4 or 6)
+             const int lval)           // spherical harmonic number (usually 4 or 6)
 {
    // get a vector which contains qlm averaged over all particles
    // with indexes in pnums i.e.
