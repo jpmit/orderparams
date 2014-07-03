@@ -86,7 +86,7 @@ vector<complex<double> > averageqlm(const array2d& qlm,
    }
      
    for (int m = 0; m != 2 * lval + 1; ++m) {
-      qlmaverage[m] = qlmaverage[m]/ (static_cast<double>(pnums.size()));
+      qlmaverage[m] = qlmaverage[m] / (static_cast<double>(pnums.size()));
    }
 
    return qlmaverage;
@@ -339,7 +339,7 @@ array2d qlms(const vector<Particle>& particles, const Box& simbox,
       // Now divide by N_b(i)
       if (numneigh[i] >= 1) {
          for (int k = 0; k != 2 * lval + 1; ++k) 
-            qlm[i][k] = qlm[i][k]/(static_cast<double>(numneigh[i]));
+            qlm[i][k] = qlm[i][k] / (static_cast<double>(numneigh[i]));
       }        
    } // next particle i
 

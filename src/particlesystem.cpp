@@ -41,8 +41,7 @@ ParticleSystem::ParticleSystem(string pfile)
    nlinks = atoi(params["q6numlinks"].c_str());
 
    if (LOGGING) {
-      cout << LOGMSG << "read " << allpars.size() << " particles"
-           << endl
+      cout << LOGMSG << "read " << allpars.size() << " particles" << endl
            << LOGMSG << "values for particle system: " << endl
            << LOGMSG << "lboxx "     << lboxx << endl
            << LOGMSG << "lboxy "     << lboxy << endl

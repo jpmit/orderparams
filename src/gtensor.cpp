@@ -34,16 +34,15 @@ GTensor::GTensor(const ParticleSystem& psystem, const vector<int>& cnums)
    
    // After this call, topeig stores the 2 eigenvalues of top part
    diagonalize(g, 2, res, topeig);
-}	  
+}    
 
 // Take positions of particles in largest cluster.  Return particles
-//	in the largest cluster, but without periodic BCS.  The trick here
-//	is to replicate the system in x and y directions, then to find the
-//	largest cluster in this large system (note the system is assumed
-//	not to be periodic in z).
+// in the largest cluster, but without periodic BCS.  The trick here
+// is to replicate the system in x and y directions, then to find the
+// largest cluster in this large system (note the system is assumed
+// not to be periodic in z).
 
-vector<Particle> posnoperiodic(const vector<Particle>& cpars,
-										 const Box& simbox)
+vector<Particle> posnoperiodic(const vector<Particle>& cpars, const Box& simbox)
 {
    const vector<Particle>::size_type ncl = cpars.size();
    const vector<Particle> repcpars = replicate(cpars, simbox);
@@ -84,17 +83,17 @@ vector<Particle> replicate(const vector<Particle>& pars, const Box& simbox)
       newpars[i + npar].pos[1] += simbox.lboxy;
       // top right
       newpars[i + 2 * npar].pos[0] += simbox.lboxx;
-      newpars[i + 2 * npar].pos[1] += simbox.lboxy;			 
+      newpars[i + 2 * npar].pos[1] += simbox.lboxy;          
       // right
       newpars[i + 3 * npar].pos[0] += simbox.lboxx;
       // bottom right
       newpars[i + 4 * npar].pos[0] += simbox.lboxx;
-      newpars[i + 4 * npar].pos[1] -= simbox.lboxy;			 			 
+      newpars[i + 4 * npar].pos[1] -= simbox.lboxy;                   
       // bottom
-      newpars[i + 5 * npar].pos[1] -= simbox.lboxy;			 			 
+      newpars[i + 5 * npar].pos[1] -= simbox.lboxy;                   
       // bottom left
       newpars[i + 6 * npar].pos[0] -= simbox.lboxx;
-      newpars[i + 6 * npar].pos[1] -= simbox.lboxy;			 			 
+      newpars[i + 6 * npar].pos[1] -= simbox.lboxy;                   
       // left
       newpars[i + 7 * npar].pos[0] -= simbox.lboxx;
       // top left
@@ -110,7 +109,7 @@ vector<Particle> replicate(const vector<Particle>& pars, const Box& simbox)
 vector<double> cofmass(const vector<Particle>& particles)
 {
    vector<double> cm(3, 0.0);
-	  
+     
    vector<Particle>::size_type i;
    vector<Particle>::size_type npar = particles.size();
    for (i = 0; i != npar; ++i) {
@@ -121,7 +120,7 @@ vector<double> cofmass(const vector<Particle>& particles)
    cm[0] /= npar;
    cm[1] /= npar;
    cm[2] /= npar;
-	  
+     
    return cm;
 }
 
@@ -132,7 +131,7 @@ tensor gytensor(const vector<Particle>& particles)
 {
    vector<double> cmass = cofmass(particles);
    tensor gyt(boost::extents[3][3]);
-   std::fill(gyt.origin(), gyt.origin() + gyt.size(), 0.0);	  
+   std::fill(gyt.origin(), gyt.origin() + gyt.size(), 0.0);   
 
    double rcm[3];
    vector<Particle>::size_type i;
@@ -163,9 +162,9 @@ tensor gytensor(const vector<Particle>& particles)
 }
 
 // Return radius of gyration tensor.  Note that periodic boundary
-//	conditions need to be removed before computing this. Here this is
-//	achieved via the function replicate (defined above). note cnums
-//	gives indices into psystem.allpars of particles in largest cluster.
+// conditions need to be removed before computing this. Here this is
+// achieved via the function replicate (defined above). note cnums
+// gives indices into psystem.allpars of particles in largest cluster.
 
 tensor getgytensor(const ParticleSystem& psystem, const vector<int>& cnums)
 {

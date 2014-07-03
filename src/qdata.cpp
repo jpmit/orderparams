@@ -113,14 +113,14 @@ QData::QData(const ParticleSystem& psystem, const int _lval) : lval(_lval)
 // to the Ten-Wolde Frenkel (TF) method.
 
 vector<TFCLASS> classifyparticlestf(const ParticleSystem& psystem,
-												const QData& q6data)
+                                    const QData& q6data)
 {
    int npar = q6data.ql.size();
    vector<TFCLASS> parclass(npar, LIQ);
 
    // from nlinks, work out which particles are xtal
    vector<int> xps = xtalpars(q6data.numlinks, psystem.nlinks);
-	  
+     
    for (vector<LDCLASS>::size_type i = 0; i != psystem.nsurf; ++i) {
       parclass[i] = SURF;
    }
@@ -136,8 +136,8 @@ vector<TFCLASS> classifyparticlestf(const ParticleSystem& psystem,
 // according to the Lechner Dellago (LD) method.
 
 vector<LDCLASS> classifyparticlesld(const ParticleSystem& psystem,
-												const QData& q4data,
-												const QData& q6data)
+                                    const QData& q4data,
+                                    const QData& q6data)
 {
    unsigned int npar = q6data.ql.size();
    vector<LDCLASS> parclass(npar);
@@ -203,7 +203,7 @@ vector<int> largestclusterld(const ParticleSystem& psystem,
 // Largest cluster using TF classifications.
 
 vector<int> largestclustertf(const ParticleSystem& psystem,
-									  const vector<TFCLASS>& tfclass)
+                             const vector<TFCLASS>& tfclass)
 {
    // get vector with indices that are all crystal particles
    vector<int> xps;
@@ -224,5 +224,5 @@ vector<int> largestclustertf(const ParticleSystem& psystem,
    // to reindex so that it contains indices into psystem.allpars
    // (see utility.cpp)
    reindex(cnums, xps);
-   return cnums;	  
+   return cnums;    
 }
