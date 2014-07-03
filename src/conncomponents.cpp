@@ -13,7 +13,7 @@ using std::vector;
 using std::cout;
 using std::endl;
 
-// Create graph with crystal pars as nodes and vertices between neighbours.
+// Create graph with crystal pars as nodes and edges between neighbours.
 
 graph getxgraph(const vector<Particle>& particles,
                 const vector<int>& xpars, const Box& simbox)
