@@ -112,8 +112,7 @@ QData::QData(const ParticleSystem& psystem, const int _lval) : lval(_lval)
 // Classify particles as either Liquid-like or crystalline according
 // to the Ten-Wolde Frenkel (TF) method.
 
-vector<TFCLASS> classifyparticlestf(const ParticleSystem& psystem,
-                                    const QData& q6data)
+vector<TFCLASS> classifyparticlestf(const ParticleSystem& psystem, const QData& q6data)
 {
    int npar = q6data.ql.size();
    vector<TFCLASS> parclass(npar, LIQ);
@@ -135,8 +134,7 @@ vector<TFCLASS> classifyparticlestf(const ParticleSystem& psystem,
 // Classify particles as FCC, HCP, BCC, LIQUID, ICOSAHEDRAL or SURFACE
 // according to the Lechner Dellago (LD) method.
 
-vector<LDCLASS> classifyparticlesld(const ParticleSystem& psystem,
-                                    const QData& q4data,
+vector<LDCLASS> classifyparticlesld(const ParticleSystem& psystem, const QData& q4data,
                                     const QData& q6data)
 {
    unsigned int npar = q6data.ql.size();
@@ -174,8 +172,7 @@ vector<LDCLASS> classifyparticlesld(const ParticleSystem& psystem,
 
 // Largest cluster using LD classifications.
 
-vector<int> largestclusterld(const ParticleSystem& psystem,
-                             const vector<LDCLASS>& ldclass)
+vector<int> largestclusterld(const ParticleSystem& psystem, const vector<LDCLASS>& ldclass)
 {
    // get vector with indices that are all crystal particles
    vector<int> xps;
@@ -202,8 +199,7 @@ vector<int> largestclusterld(const ParticleSystem& psystem,
 
 // Largest cluster using TF classifications.
 
-vector<int> largestclustertf(const ParticleSystem& psystem,
-                             const vector<TFCLASS>& tfclass)
+vector<int> largestclustertf(const ParticleSystem& psystem, const vector<TFCLASS>& tfclass)
 {
    // get vector with indices that are all crystal particles
    vector<int> xps;

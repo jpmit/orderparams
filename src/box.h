@@ -21,8 +21,7 @@ public:
    inline double sepsq(const Particle& p1, const Particle& p2) const;
 
    // these ones also return whether the particles are neighbours
-   inline bool isneigh(const Particle& p1, const Particle& p2,
-                       double& r2) const;
+   inline bool isneigh(const Particle& p1, const Particle& p2, double& r2) const;
    inline bool isneigh(double* s, double&r2) const;
 
    // testing whether positions are valid (in box)
@@ -32,10 +31,8 @@ public:
    inline void setdims(double lx, double ly, double lz);
      
    // the following friends are in gtensor.cpp
-   friend std::vector<Particle>
-      replicate(const std::vector<Particle>&, const Box&);
-   friend std::vector<Particle>
-      posnoperiodic(const std::vector<Particle>&, const Box&);
+   friend std::vector<Particle> replicate(const std::vector<Particle>&, const Box&);
+   friend std::vector<Particle> posnoperiodic(const std::vector<Particle>&, const Box&);
 
 private:
    double lboxx;

@@ -66,8 +66,7 @@ double plm(const int lval, const int mval, const double x)
 
 // Spherical harmonic Y(l,m,theta,phi).
 
-complex<double> ylm(const int lval, const int mval,
-                    const double costheta, const double phi)
+complex<double> ylm(const int lval, const int mval, const double costheta, const double phi)
 {
    int absm = abs(mval);
    double coeff = sqrt((2.0 * lval + 1.0) * fact(lval - absm) /

@@ -40,13 +40,9 @@ public:
    vector<int> numlinks;
 };
 
-std::vector<TFCLASS> classifyparticlestf(const ParticleSystem&,
-                                         const QData&);
-std::vector<LDCLASS> classifyparticlesld(const ParticleSystem&,
-                                         const QData&, const QData&);
-std::vector<int> largestclusterld(const ParticleSystem&,
-                                  const std::vector<LDCLASS>&);
-std::vector<int> largestclustertf(const ParticleSystem&,
-                                  const std::vector<TFCLASS>&);
+std::vector<TFCLASS> classifyparticlestf(const ParticleSystem&, const QData&);
+std::vector<LDCLASS> classifyparticlesld(const ParticleSystem&, const QData&, const QData&);
+std::vector<int> largestclusterld(const ParticleSystem&, const std::vector<LDCLASS>&);
+std::vector<int> largestclustertf(const ParticleSystem&, const std::vector<TFCLASS>&);
 
 #endif

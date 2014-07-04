@@ -53,8 +53,7 @@ int main(int argc, char* argv[])
 	  
    // from q6data and q4 data, classify each particle as bcc, hcp
    // etc.  using Lechner Dellago approach.
-   vector<LDCLASS> ldclass = classifyparticlesld(psystem, q4data,
-                                                 q6data);
+   vector<LDCLASS> ldclass = classifyparticlesld(psystem, q4data, q6data);
 
    // from q6 data only, classify each particle as either
    // crystalline or liquid, using TenWolde Frenkel approach
@@ -68,10 +67,8 @@ int main(int argc, char* argv[])
 
    // indices of liquid like particles that have at least one
    // neighbour in the cluster, for both ld and tf
-   vector<int> ldliquid1nums = nparatleastone(ldclass, ldcnums,
-                                              LIQUID, q6data.lneigh);
-   vector<int> tfliquid1nums = nparatleastone(tfclass, tfcnums,
-                                              LIQ, q6data.lneigh);
+   vector<int> ldliquid1nums = nparatleastone(ldclass, ldcnums, LIQUID, q6data.lneigh);
+   vector<int> tfliquid1nums = nparatleastone(tfclass, tfcnums, LIQ, q6data.lneigh);
 
    // indexes of all particles (minus surface particles)
    vector<int> pindices = range(psystem.nsurf, psystem.allpars.size());

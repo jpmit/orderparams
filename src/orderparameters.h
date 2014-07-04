@@ -22,8 +22,7 @@ int numconnections(const QData&, const std::vector<int>&);
 // a list of particles. Used for n_fcc etc.
 
 template <class etype>
-double parfrac(const std::vector<etype>& pclass, const std::vector<int>& cnums,
-               const etype plabel)
+double parfrac(const std::vector<etype>& pclass, const std::vector<int>& cnums, const etype plabel)
 {
    int num = 0;
    for (std::vector<int>::size_type i = 0; i != cnums.size(); ++i) {
@@ -42,10 +41,8 @@ double parfrac(const std::vector<etype>& pclass, const std::vector<int>& cnums,
 // particles in the cluster that have at least one liquid neighbour.
 
 template <class etype>
-std::vector<int> nparatleastone(const std::vector<etype>& pclass,
-                                const std::vector<int>& cnums,
-                                const etype plabel,
-                                const std::vector<std::vector<int> >& lneigh)
+std::vector<int> nparatleastone(const std::vector<etype>& pclass, const std::vector<int>& cnums,
+                                const etype plabel, const std::vector<std::vector<int> >& lneigh)
 {
    std::vector<int> indexes;
    for (typename std::vector<etype>::size_type i = 0; i != pclass.size(); ++i) {
